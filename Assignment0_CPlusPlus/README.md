@@ -2,14 +2,13 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name (At most 1 partner for this assignment): 
-* How many hours did it take you to complete this assignment? 
-* Did you collaborate or share ideas with any other students/TAs/Professors? 
+* Name and partners name (At most 1 partner for this assignment): Michael Hebert
+* How many hours did it take you to complete this assignment? 4
+* Did you collaborate or share ideas with any other students/TAs/Professors? Anton Lazarev
 * Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
+  * cppreference.com
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+  I learned a lot about streams, which was a fun learning experience.
   
 ## Description
 
