@@ -10,6 +10,7 @@ struct Star
 {
 	float x, y, z;
 	float speed;
+    float lifetime;
 	QColor color;
 };
 
