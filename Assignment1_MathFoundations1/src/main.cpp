@@ -9,14 +9,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 // Sample unit test comparing against GLM.
 bool unitTest0(){
-	glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
-	Matrix4f myIdentity( 1.0f,0,0,0,
-        			     0,1.0f,0,0,
-		        	     0,0,1.0f,0,
-			             0,0,0,1.0f);
+    glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
+    Matrix4f myIdentity( 1.0f,0,0,0,
+                         0,1.0f,0,0,
+                         0,0,1.0f,0,
+                         0,0,0,1.0f);
 
     if(
         glmIdentityMatrix[0][0]==myIdentity[0][0] &&
@@ -37,16 +38,16 @@ bool unitTest0(){
         glmIdentityMatrix[3][3]==myIdentity[3][3]){
             return true;
     }
-	
-    return false;	
+    
+    return false;   
 }
 
 bool unitTest1(){
-	glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
-	Matrix4f myIdentity( 1.0f,0,0,0,
-        			     0,1.0f,0,0,
-		        	     0,0,1.0f,0,
-			             0,0,0,1.0f);
+    glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
+    Matrix4f myIdentity( 1.0f,0,0,0,
+                         0,1.0f,0,0,
+                         0,0,1.0f,0,
+                         0,0,0,1.0f);
 
     if(
         glmIdentityMatrix[0][0]==myIdentity(0,0) &&
@@ -67,18 +68,18 @@ bool unitTest1(){
         glmIdentityMatrix[3][3]==myIdentity(3,3)){
             return true;
     }
-	
-    return false;	
+    
+    return false;   
 }
 
 // Sample unit test comparing against GLM.
 bool unitTest2(){
-	glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
-	Vector4f a(1.0f ,0.0f,  0.0f,   0.0f);
-	Vector4f b(0.0f ,1.0f,  0.0f,   0.0f);
-	Vector4f c(0.0f ,0.0f,  1.0f,   0.0f);
-	Vector4f d(0.0f ,0.0f,  0.0f,   1.0f);
-	Matrix4f myIdentity(a,b,c,d);
+    glm::mat4 glmIdentityMatrix = glm::mat4(1.0f);
+    Vector4f a(1.0f ,0.0f,  0.0f,   0.0f);
+    Vector4f b(0.0f ,1.0f,  0.0f,   0.0f);
+    Vector4f c(0.0f ,0.0f,  1.0f,   0.0f);
+    Vector4f d(0.0f ,0.0f,  0.0f,   1.0f);
+    Matrix4f myIdentity(a,b,c,d);
 
     if(
         glmIdentityMatrix[0][0]==myIdentity[0][0] &&
@@ -99,20 +100,21 @@ bool unitTest2(){
         glmIdentityMatrix[3][3]==myIdentity[3][3]){
             return true;
     }
-	
-    return false;	
+    
+    return false;   
 }
 
 // Sample unit test comparing against GLM.
 // TODO: Test against glm::scale
 bool unitTest3(){
-	glm::mat4 glmScale = glm::mat4(2.0f);
-	Vector4f a(1.0f,0,0,0);
-	Vector4f b(0.0f,1.0f,0,0);
-	Vector4f c(0,0,1.0f,0);
-	Vector4f d(0,0,0,1.0f);
-	Matrix4f myScaled(a,b,c,d);
-    myScaled.MakeScale(2.0f,2.0f,2.0f);
+    glm::mat4 glmScale = glm::mat4(1.0f);
+    glmScale = glm::scale(glmScale, glm::vec3(2.0f, 2.0f, 2.0f));
+    Vector4f a(1.0f,0,0,0);
+    Vector4f b(0.0f,1.0f,0,0);
+    Vector4f c(0,0,1.0f,0);
+    Vector4f d(0,0,0,1.0f);
+    Matrix4f myScaled(a,b,c,d);
+    myScaled = myScaled.MakeScale(2.0f,2.0f,2.0f);
 
     if(
         glmScale[0][0]==myScaled[0][0] &&
@@ -133,18 +135,18 @@ bool unitTest3(){
         glmScale[3][3]==myScaled[3][3]){
             return true;
     }
-	
-    return false;	
+    
+    return false;   
 }
 
 // Sample unit test comparing against GLM.
 // Testing operator
 bool unitTest4(){
-	glm::mat4 glmTest = glm::mat4(1.0f);
+    glm::mat4 glmTest = glm::mat4(1.0f);
     glmTest[1][3] = 72.0f;
     glmTest[2][3] = 2.1f;
 
-	Matrix4f myMatrix(0,0,0,0,
+    Matrix4f myMatrix(0,0,0,0,
                       0,0,0,0,
                       0,0,0,0,
                       0,0,0,0);
@@ -156,8 +158,8 @@ bool unitTest4(){
         glmTest[2][3]==myMatrix[2][3] ){
             return true;
     }
-	
-    return false;	
+    
+    return false;   
 }
 
 // Sample unit test testing your library

@@ -2,6 +2,7 @@
 #define Vector4f_H
 
 #include <cmath>
+#include <iostream>
 
 // Vector4f performs vector operations with 4-dimensions
 // The purpose of this class is primarily for 3D graphics
@@ -130,7 +131,7 @@ inline Vector4f operator-(const Vector4f& v)
 // Return the magnitude of a vector
 inline float Magnitude(const Vector4f& v)
 {
-    return sqrt(v.x*v.x + v.y*v.y + v.z*v.z + v.w*v.w);
+    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
 }
 
 // Add two vectors together
@@ -157,12 +158,19 @@ inline Vector4f operator-(const Vector4f& a, const Vector4f& b)
     return vec;
 }
 
+// Print vector to ostream
+std::ostream& operator<<(std::ostream& os, const Vector4f& v)
+{
+    os << v.x << '\t' << v.y << '\t' << v.z << '\t' << v.w << std::endl;
+    return os;
+}
+
 // Vector Projection
 // Note: This is the vector projection of 'a' onto 'b'
 inline Vector4f Project(const Vector4f& a, const Vector4f& b)
 {
     Vector4f vec;
-    
+
     float dot = Dot(a, b);
     float lb = Magnitude(b);
     vec.x = dot * b.x / lb;
