@@ -24,37 +24,40 @@ private:
 public:
     Matrix4f() = default;
 
-    // Column-major order - n[0][3] is column 0, row 3
-    // Matrix constructor with 9 scalar values.
+    // copy constructor
+    Matrix4f(const Matrix4f &m) : Matrix4f(m[0], m[1], m[2], m[3]) {}
+
+    // Matrix constructor with 16 scalar values in row-major order
     Matrix4f(float n00, float n01, float n02, float n03, 
              float n10, float n11, float n12, float n13,
              float n20, float n21, float n22, float n23,
              float n30, float n31, float n32, float n33)
     {
+        // stored in column-major order (n02 goes in n[2][0])
         n[0][0] = n00; n[0][1] = n10; n[0][2] = n20; n[0][3] = n30;
         n[1][0] = n01; n[1][1] = n11; n[1][2] = n21; n[1][3] = n31;
         n[2][0] = n02; n[2][1] = n12; n[2][2] = n22; n[2][3] = n32;
         n[3][0] = n03; n[3][1] = n13; n[3][2] = n23; n[3][3] = n33;
     }
 
-    // Matrix constructor from four vectors.
+    // Matrix constructor from four vectors representing the columns
     // Note: 'd' will almost always be 0,0,0,1
     Matrix4f(const Vector4f& a, const Vector4f& b, const Vector4f& c,
              const Vector4f& d)
     {
-        n[0][0] = a.x; n[0][1] = b.x; n[0][2] = c.x; n[0][3] = d.x;
-        n[1][0] = a.y; n[1][1] = b.y; n[1][2] = c.y; n[1][3] = d.y;
-        n[2][0] = a.z; n[2][1] = b.z; n[2][2] = c.z; n[2][3] = d.z;
-        n[3][0] = a.w; n[3][1] = b.w; n[3][2] = c.w; n[3][3] = d.w;
+        n[0][0] = a.x; n[1][0] = b.x; n[2][0] = c.x; n[3][0] = d.x;
+        n[0][1] = a.y; n[1][1] = b.y; n[2][1] = c.y; n[3][1] = d.y;
+        n[0][2] = a.z; n[1][2] = b.z; n[2][2] = c.z; n[3][2] = d.z;
+        n[0][3] = a.w; n[1][3] = b.w; n[2][3] = c.w; n[3][3] = d.w;
     }
 
     // Makes the matrix an identity matrix
     void identity()
     {
-        n[0][0] = 1; n[0][1] = 0; n[0][2] = 0; n[0][3] = 0;
-        n[1][0] = 0; n[1][1] = 1; n[1][2] = 0; n[1][3] = 0;
-        n[2][0] = 0; n[2][1] = 0; n[2][2] = 1; n[2][3] = 0;
-        n[3][0] = 0; n[3][1] = 0; n[3][2] = 0; n[3][3] = 1;
+        n[0][0] = 1; n[1][0] = 0; n[2][0] = 0; n[3][0] = 0;
+        n[0][1] = 0; n[1][1] = 1; n[2][1] = 0; n[3][1] = 0;
+        n[0][2] = 0; n[1][2] = 0; n[2][2] = 1; n[3][2] = 0;
+        n[0][3] = 0; n[1][3] = 0; n[2][3] = 0; n[3][3] = 1;
     }
 
     // Index operator with two dimensions
@@ -100,11 +103,13 @@ public:
     }
     Matrix4f MakeScale(float sx, float sy, float sz)
     {
-        (*this)[0] *= sx;
-        (*this)[1] *= sy;
-        (*this)[2] *= sz;
+        Matrix4f m(*this);
 
-        return (*this);
+        m[0] *= sx;
+        m[1] *= sy;
+        m[2] *= sz;
+
+        return m;
     }
 };
 
