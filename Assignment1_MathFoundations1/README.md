@@ -6,14 +6,13 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name (At most 1 partner for this assignment): 
-* How many hours did it take you to complete this assignment? 
-* Did you collaborate or share ideas with any other students/TAs/Professors? 
-* Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
+* Name and partners name (At most 1 partner for this assignment): Michael Hebert (no partner)
+* How many hours did it take you to complete this assignment? 1
+* Did you collaborate or share ideas with any other students/TAs/Professors? No
+* Did you use any external resources? No
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+Thinking about column/row major order and ensuring that all the logic worked
+correctly for the one I used.
 
 ## Logistics
 
@@ -126,12 +125,21 @@ The following are a list of questions about the design of our library.
 
 You may add your notes here:
 
-1. *answer to number 1*
-2. *answer to number 2*
-3. *answer to number 3*
-4. *answer to number 4*
-5. *answer to number 5*
-6. *answer to number 6*
+1.  i.  When you want to signal in a method signature that the argument will not
+        be mutated.
+    ii. When you want to create a method that does not mutate the class
+2.  `inline` signals to the compiler that it is allowed to replace calls to this
+    method with the actual contents of the method, rather than including the
+    overhead of a function call. In practice, the compiler will do what it wants
+    in this regard.
+3.  We can avoid separately compiling or packaging the library. We also can
+    utilize compiler optimizations more efficiently.
+4.  That would be a helpful way to output vectors and matrices as strings to an
+    output stream.
+5.  Distance between floats is relative, and it would be difficult to create a
+    one-size-fits-all solution for comparing them.
+6.  You could throw exceptions for index out of bounds errors - but then again,
+    C doesn't do that anyways so you could also not.
 
 # Part 4 - Testing Vector4f.h and Matrix4f.h
 
