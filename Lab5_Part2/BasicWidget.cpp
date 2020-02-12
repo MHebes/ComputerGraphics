@@ -276,7 +276,7 @@ void BasicWidget::paintGL()
   shaderProgram_.bind();
   vao_.bind();
   // TODO: Change number of indices drawn
-  glDrawElements(GL_TRIANGLES, renderSquare ? 4 : 3, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, renderSquare ? 6 : 3, GL_UNSIGNED_INT, 0);
   // ENDTODO
   vao_.release();
   shaderProgram_.release();
@@ -303,7 +303,7 @@ void BasicWidget::paintGL()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboID_);
   // Render
   // TODO: Change number of indices drawn
-  glDrawElements(GL_TRIANGLES, renderSquare ? 4 : 3, GL_UNSIGNED_INT, nullptr);
+  glDrawElements(GL_TRIANGLES, renderSquare ? 6 : 3, GL_UNSIGNED_INT, nullptr);
   // ENDTODO
   // Unbind everything
   glDisableVertexAttribArray(0);
