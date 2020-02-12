@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // Publics
-BasicWidget::BasicWidget(QWidget* parent) : QOpenGLWidget(parent), vbo_(QOpenGLBuffer::VertexBuffer), cbo_(QOpenGLBuffer::VertexBuffer), ibo_(QOpenGLBuffer::IndexBuffer), logger_(this)
+BasicWidget::BasicWidget(QWidget* parent) : QOpenGLWidget(parent), vbo_(QOpenGLBuffer::VertexBuffer), ibo_(QOpenGLBuffer::IndexBuffer), logger_(this)
 {
   setFocusPolicy(Qt::StrongFocus);
 }
@@ -11,10 +11,6 @@ BasicWidget::~BasicWidget()
 {
   vbo_.release();
   vbo_.destroy();
-  // TODO: Remove the CBO
-  cbo_.release();
-  cbo_.destroy();
-  // End TODO
   ibo_.release();
   ibo_.destroy();
   vao_.release();
@@ -38,9 +34,8 @@ QString BasicWidget::vertexShaderString() const
 
     "void main()\n"
     "{\n"
-    // TODO: gl_Position must be updated!
-    "  gl_Position = vec4(position, 1.0);\n"
-    // END TODO
+    // "  gl_Position = vec4(position, 1.0);\n"
+    "  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);\n"
     "  vertColor = color;\n"
     "}\n";
   return str;
@@ -85,9 +80,15 @@ void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
   // Handle key events here.
   if (keyEvent->key() == Qt::Key_Left) {
     qDebug() << "Left Arrow Pressed";
+    model_.rotate(-10.0f, 0.0f, 1.0f, 0.0f);
+    shaderProgram_.bind();
+    shaderProgram_.setUniformValue("modelMatrix", model_);
     update();  // We call update after we handle a key press to trigger a redraw when we are ready
   } else if (keyEvent->key() == Qt::Key_Right) {
     qDebug() << "Right Arrow Pressed";
+    model_.rotate(10.0f, 0.0f, 1.0f, 0.0f);
+    shaderProgram_.bind();
+    shaderProgram_.setUniformValue("modelMatrix", model_);
     update();  // We call update after we handle a key press to trigger a redraw when we are ready
   } else {
     qDebug() << "You Pressed an unsupported Key!";
@@ -126,19 +127,21 @@ void BasicWidget::initializeGL()
   createShader();
 
   // Define our verts
-  static const GLfloat verts[9] =
+  static const GLfloat verts[] =
   {
-    0.0f, 0.0f, 0.0f, // Center vertex position
-    1.0f, 1.0f, 0.0f,  // Top right vertex position
-    -1.0f,  1.0f, 0.0f  // Top left vertex position
+    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // Center vertex position
+    1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,   // Top right vertex position
+    -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top left vertex position
   };
+
   // Define our vert colors
-  static const GLfloat colors[12] =
-  {
-      1.0f, 0.0f, 0.0f, 1.0f, // red
-      0.0f, 1.0f, 0.0f, 1.0f, // green
-      0.0f, 0.0f, 1.0f, 1.0f // blue
-  };
+  // static const GLfloat colors[12] =
+  // {
+  //     1.0f, 0.0f, 0.0f, 1.0f, // red
+  //     0.0f, 1.0f, 0.0f, 1.0f, // green
+  //     0.0f, 0.0f, 1.0f, 1.0f // blue
+  // };
+
   // Define our indices
   static const GLuint idx[3] =
   {
@@ -153,14 +156,7 @@ void BasicWidget::initializeGL()
   vbo_.create();
   vbo_.setUsagePattern(QOpenGLBuffer::StaticDraw);
   vbo_.bind();
-  vbo_.allocate(verts, 3 * 3 * sizeof(GL_FLOAT));
-  // END TODO
-  
-  // TODO:  Remove the cbo_
-  cbo_.create();
-  cbo_.setUsagePattern(QOpenGLBuffer::StaticDraw);
-  cbo_.bind();
-  cbo_.allocate(colors, 3 * 4 * sizeof(GL_FLOAT));
+  vbo_.allocate(verts, 3 * 7 * sizeof(GL_FLOAT));
   // END TODO
 
   // TODO:  Generate our index buffer
@@ -178,10 +174,9 @@ void BasicWidget::initializeGL()
   // Note:  Remember that Offset and Stride are expressed in terms
   //        of bytes!
   shaderProgram_.enableAttributeArray(0);
-  shaderProgram_.setAttributeBuffer(0, GL_FLOAT, 0, 3);
-  cbo_.bind();
+  shaderProgram_.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GL_FLOAT)*7);
   shaderProgram_.enableAttributeArray(1);
-  shaderProgram_.setAttributeBuffer(1, GL_FLOAT, 0, 4);
+  shaderProgram_.setAttributeBuffer(1, GL_FLOAT, sizeof(GL_FLOAT)*3, 4, sizeof(GL_FLOAT)*7);
   // END TODO
 
   ibo_.bind();
@@ -195,8 +190,19 @@ void BasicWidget::initializeGL()
 void BasicWidget::resizeGL(int w, int h)
 {
   glViewport(0, 0, w, h);
+
   // TODO:  Set up the model, view, and projection matrices
+  model_.rotate(30.0f, 0.5f, 0.5f, 0.5f);
+  view_.translate(0.0f, 0.0f, -5.0f);
+  view_.rotate(180.0f, 0.0f, 0.0f, -1.0f);
+  projection_.perspective(70.0f, 1.5f, 0.0f, 100.0f);
   // END TODO
+
+  shaderProgram_.bind();
+
+  shaderProgram_.setUniformValue("modelMatrix", model_);
+  shaderProgram_.setUniformValue("viewMatrix", view_);
+  shaderProgram_.setUniformValue("projectionMatrix", projection_);
 }
 
 void BasicWidget::paintGL()
