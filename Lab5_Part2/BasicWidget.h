@@ -5,7 +5,7 @@
 #include <QtOpenGL>
 
 // TODO:  This macro should work when both true AND false
-#define USE_QT_OPENGL true
+#define USE_QT_OPENGL false
 // ENDTODO
 
 /**

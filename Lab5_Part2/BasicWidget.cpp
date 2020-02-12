@@ -242,15 +242,11 @@ void BasicWidget::initializeGL()
   glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GL_FLOAT), verts, GL_STATIC_DRAW);
 
   // TODO:  Generate our color buffer
-  cao_.create();
-  cao_.bind();
   glGenBuffers(1, &cboID_);
   glBindBuffer(GL_ARRAY_BUFFER, cboID_);
   glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GL_FLOAT), colors, GL_STATIC_DRAW);
   // ENDTODO
   // TODO:  Generate our index buffer
-  iao_.create();
-  iao_.bind();
   glGenBuffers(1, &iboID_);
   glBindBuffer(GL_ARRAY_BUFFER, iboID_);
   glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(GL_UNSIGNED_INT), idx, GL_STATIC_DRAW);
