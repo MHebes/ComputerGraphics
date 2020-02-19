@@ -5,9 +5,16 @@
 BasicWidget::BasicWidget(QWidget* parent)
     : QOpenGLWidget(parent),
       m_vertbuf(QOpenGLBuffer::VertexBuffer),
-      m_idxbuf(QOpenGLBuffer::IndexBuffer)
+      m_idxbuf(QOpenGLBuffer::IndexBuffer),
+      m_is_wireframe(false)
 {
   setFocusPolicy(Qt::StrongFocus);
+
+  // initialize matrices
+  m_model.setToIdentity();
+  m_view.setToIdentity();
+  m_projection.setToIdentity();
+  m_view.translate(0.0f, 0.0f, -5.0f);
 }
 
 BasicWidget::~BasicWidget()
@@ -21,6 +28,8 @@ BasicWidget::~BasicWidget()
 
 //////////////////////////////////////////////////////////////////////
 // Privates
+
+std::string BasicWidget::m_filename = "../objects/cube.obj";
 
 QString BasicWidget::m_vert_shader_src =
     "#version 330\n"
@@ -46,7 +55,6 @@ QString BasicWidget::m_frag_shader_src =
     "  color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
     "}\n";
 
-std::string BasicWidget::m_filename = "../objects/cube.obj";
 
 void BasicWidget::createShaders()
 {
@@ -74,17 +82,34 @@ void BasicWidget::createShaders()
 // Protected
 void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-  // TODO
   // Handle key events here.
-  qDebug() << "You Pressed an unsupported Key!";
-  // ENDTODO
+  if (keyEvent->key() == Qt::Key_Left) {
+    qDebug() << "Left Arrow Pressed";
+    m_model.rotate(-10.0f, 0.0f, 1.0f, 0.0f);
+    m_program.bind();
+    m_program.setUniformValue("model", m_model);
+    update();  // We call update after we handle a key press to trigger a redraw when we are ready
+  } else if (keyEvent->key() == Qt::Key_Right) {
+    qDebug() << "Right Arrow Pressed";
+    m_model.rotate(10.0f, 0.0f, 1.0f, 0.0f);
+    m_program.bind();
+    m_program.setUniformValue("model", m_model);
+    update();  // We call update after we handle a key press to trigger a redraw when we are ready
+  } else if (keyEvent->key() == Qt::Key_W) {
+    qDebug() << "W Pressed";
+    m_is_wireframe = !m_is_wireframe;
+    if (m_is_wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  } else {
+    qDebug() << "You Pressed an unsupported Key!";
+  }
 }
 void BasicWidget::initializeGL()
 {
   makeCurrent();
   initializeOpenGLFunctions();
-  m_logger.initialize();
 
+  m_logger.initialize();
   // Setup the logger for real-time messaging (from lab 6)
   connect(&m_logger, &QOpenGLDebugLogger::messageLogged, [=]() {
     const QList<QOpenGLDebugMessage> messages = m_logger.loggedMessages();
@@ -110,11 +135,6 @@ void BasicWidget::initializeGL()
            << reinterpret_cast<const char*>(
                   glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-  // initialize matrices
-  m_model.setToIdentity();
-  m_view.setToIdentity();
-  m_projection.setToIdentity();
-
   // set up shaders
   createShaders();
 
@@ -123,14 +143,15 @@ void BasicWidget::initializeGL()
     perror("Error opening file: ");
   }
 
-  // set up buffers
-  const std::vector<GLfloat> vertices = {
-      -0.8f, -0.8f, 0.0f,  // Left vertex position
-      0.8f,  -0.8f, 0.0f,  // right vertex position
-      -0.8f, 0.8f,  0.0f,  // Top vertex position
-      0.8f,  0.8f,  0.0f};
+  // std::cout << m_loader;
 
-  const std::vector<GLuint> idx = {0, 1, 2, 2, 1, 3};
+  // set up buffers
+  // Define our verts
+  static const std::vector<GLfloat> verts = m_loader.get_vertices();
+
+  // Define our indices
+  static const std::vector<GLuint> idx = m_loader.get_idx();
+
 
   m_program.bind();
 
@@ -138,7 +159,7 @@ void BasicWidget::initializeGL()
   m_vertbuf.setUsagePattern(QOpenGLBuffer::StaticDraw);
   m_vertbuf.create();
   m_vertbuf.bind();
-  m_vertbuf.allocate(vertices.data(), vertices.size() * sizeof(GL_FLOAT));
+  m_vertbuf.allocate(verts.data(), verts.size() * sizeof(GL_FLOAT));
 
   // index buffer
   m_idxbuf.setUsagePattern(QOpenGLBuffer::StaticDraw);
@@ -162,9 +183,20 @@ void BasicWidget::initializeGL()
   m_program.release();
 
   glViewport(0, 0, width(), height());
+  // glDisable(GL_DEPTH_TEST);
 }
 
-void BasicWidget::resizeGL(int w, int h) { glViewport(0, 0, w, h); }
+void BasicWidget::resizeGL(int w, int h) {
+  glViewport(0, 0, w, h);
+
+  m_projection.perspective(70.0f, (float)w/h, 0.0f, 100.0f);
+
+  m_program.bind();
+
+  m_program.setUniformValue("model", m_model);
+  m_program.setUniformValue("view", m_view);
+  m_program.setUniformValue("projection", m_projection);
+}
 
 void BasicWidget::paintGL()
 {
@@ -178,9 +210,8 @@ void BasicWidget::paintGL()
   m_program.bind();
   m_vao.bind();
 
-  // qDebug() << m_idxbuf.size() / sizeof(GLuint);
-  glDrawElements(GL_TRIANGLES, m_idxbuf.size() / sizeof(GLuint),
-                 GL_UNSIGNED_INT, 0);
+  // TODO use the number of triangles rather than buffer size
+  glDrawElements(GL_TRIANGLES, m_idxbuf.size() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 
   m_vao.release();
   m_program.release();

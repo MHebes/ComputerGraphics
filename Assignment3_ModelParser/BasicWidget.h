@@ -20,6 +20,8 @@ private:
   static QString m_frag_shader_src;
   static std::string m_filename;
 
+  bool m_is_wireframe;
+
   ObjLoader m_loader;
   QOpenGLVertexArrayObject m_vao;
 

@@ -7,14 +7,7 @@
 #include <sstream>
 #include <string>
 
-ObjLoader::ObjLoader() : normals(), vertices(), faces() {}
-
-std::ostream& operator<<(std::ostream& os, const vector3& vec)
-{
-  os << vec.x << " " << vec.y << " " << vec.z;
-
-  return os;
-}
+ObjLoader::ObjLoader() : m_normals(), m_vertices(), m_faces() {}
 
 std::ostream& operator<<(std::ostream& os, const face& f)
 {
@@ -30,13 +23,17 @@ std::ostream& operator<<(std::ostream& os, const face& f)
 
 std::ostream& operator<<(std::ostream& os, const ObjLoader& loader)
 {
-  for (const vector3& vec : loader.vertices) {
-    os << "v " << vec << std::endl;
+  const std::vector<float> vertices = loader.get_vertices();
+  const std::vector<float> normals = loader.get_normals();
+  const std::vector<face> faces = loader.get_faces();
+
+  for (int i = 0; i < vertices.size(); i+=3) {
+    os << "v " << vertices.at(i) << " " << vertices.at(i+1) << " " << vertices.at(i+2) << std::endl;
   }
-  for (const vector3& n : loader.normals) {
-    os << "vn " << n << std::endl;
+  for (int i = 0; i < normals.size(); i+=3) {
+    os << "vn " << normals.at(i) << " " << normals.at(i+1) << " " << normals.at(i+2) << std::endl;
   }
-  for (const face& f : loader.faces) {
+  for (const face& f : faces) {
     os << "f " << f << std::endl;
   }
 
@@ -45,17 +42,14 @@ std::ostream& operator<<(std::ostream& os, const ObjLoader& loader)
 
 int ObjLoader::parse_file(const std::string filename)
 {
-  vertices.clear();
-  normals.clear();
-  faces.clear();
-  idx.clear();
+  m_vertices.clear();
+  m_normals.clear();
+  m_faces.clear();
+  m_idx.clear();
 
   std::ifstream infile(filename);
 
   if (!infile.is_open()) {
-    char* name = get_current_dir_name();
-    std::cout << "CWD: " << name << std::endl;
-    free(name);
     return EXIT_FAILURE;
   }
 
@@ -76,9 +70,10 @@ int ObjLoader::parse_file(const std::string filename)
 
       ss >> x >> y >> z;
 
-      vector3 vec{x, y, z};
-
-      vertices.push_back(vec);
+      m_vertices.reserve(m_vertices.size() + 3);
+      m_vertices.push_back(x);
+      m_vertices.push_back(y);
+      m_vertices.push_back(z);
     }
     else if (type == "vn") {  // normal
       float x;
@@ -87,9 +82,10 @@ int ObjLoader::parse_file(const std::string filename)
 
       ss >> x >> y >> z;
 
-      vector3 vec{x, y, z};
-
-      normals.push_back(vec);
+      m_normals.reserve(m_normals.size() + 3);
+      m_normals.push_back(x);
+      m_normals.push_back(y);
+      m_normals.push_back(z);
     }
     else if (type == "f") {  // face
       face f;
@@ -109,16 +105,16 @@ int ObjLoader::parse_file(const std::string filename)
 
         ss >> second;
 
-        // stores face as indices into vertices and normals vectors
+        // stores face as indices into m_vertices and m_normals vectors
         f.emplace_back(first - 1, second - 1);
       }
 
       ss.clear();
 
       if (f.size() >= 3) {
-        faces.push_back(f);
-        for (int i = 0; i < 3; i++) {  // TODO support more than 3 vertices
-          idx.push_back(f.at(i).first);
+        m_faces.push_back(f);
+        for (int i = 0; i < 3; i++) {  // TODO support more than 3 m_vertices
+          m_idx.push_back(f.at(i).first);
         }
       }
     }
