@@ -4,14 +4,23 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name(At most 1 partner for this Assignment): 
-* How many hours did it take you to complete this Assignment? 
+* Name and partners name(At most 1 partner for this Assignment): Michael Hebert (no partner)
+* How many hours did it take you to complete this Assignment? 8
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
+  * GL documentation
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+
+NOTE: My program assumes that it is in a subdirectory of this one (i.e. 
+`Assignment3_ModelParser/build`). I ran the following to compile and run it:
+
+```sh
+mkdir -p build
+cd build
+cmake ..
+make
+./Assignment
+```
   
 ## Description
 

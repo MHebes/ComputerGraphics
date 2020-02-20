@@ -6,7 +6,10 @@ BasicWidget::BasicWidget(QWidget* parent)
     : QOpenGLWidget(parent),
       m_vertbuf(QOpenGLBuffer::VertexBuffer),
       m_idxbuf(QOpenGLBuffer::IndexBuffer),
-      m_is_wireframe(false)
+      m_is_wireframe(false),
+      m_eye(0.0f, 0.0f, -5.0f),
+      m_center(0.0f, 0.0f, 0.0f),
+      m_up(0.0f, 1.0f, 0.0f)
 {
   setFocusPolicy(Qt::StrongFocus);
 
@@ -14,7 +17,8 @@ BasicWidget::BasicWidget(QWidget* parent)
   m_model.setToIdentity();
   m_view.setToIdentity();
   m_projection.setToIdentity();
-  m_view.translate(0.0f, 0.0f, -5.0f);
+  // m_view.translate(0.0f, 0.0f, -15.0f);
+  m_view.lookAt(m_eye, m_center, m_up);
 }
 
 BasicWidget::~BasicWidget()
@@ -29,7 +33,8 @@ BasicWidget::~BasicWidget()
 //////////////////////////////////////////////////////////////////////
 // Privates
 
-std::string BasicWidget::m_filename = "../objects/cube.obj";
+static const std::string BUNNY_OBJ = "../objects/bunny_centered.obj";
+static const std::string MONKEY_OBJ = "../objects/monkey_centered.obj";
 
 QString BasicWidget::m_vert_shader_src =
     "#version 330\n"
@@ -83,7 +88,15 @@ void BasicWidget::createShaders()
 void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
   // Handle key events here.
-  if (keyEvent->key() == Qt::Key_Left) {
+  if (keyEvent->key() == Qt::Key_Q) {
+    qDebug() << "Q Pressed";
+    QApplication::quit();
+    update();  // We call update after we handle a key press to trigger a redraw when we are ready
+  } else if (keyEvent->key() == Qt::Key_1) {
+    qDebug() << "1 Pressed";
+    m_loader:
+    update();
+  } else if (keyEvent->key() == Qt::Key_Left) {
     qDebug() << "Left Arrow Pressed";
     m_model.rotate(-10.0f, 0.0f, 1.0f, 0.0f);
     m_program.bind();
@@ -100,10 +113,12 @@ void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
     m_is_wireframe = !m_is_wireframe;
     if (m_is_wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    update();
   } else {
     qDebug() << "You Pressed an unsupported Key!";
   }
 }
+
 void BasicWidget::initializeGL()
 {
   makeCurrent();
@@ -139,11 +154,9 @@ void BasicWidget::initializeGL()
   createShaders();
 
   // read object file
-  if (m_loader.parse_file(m_filename) != EXIT_SUCCESS) {
+  if (m_loader.parse_file(BUNNY_OBJ) != EXIT_SUCCESS) {
     perror("Error opening file: ");
   }
-
-  // std::cout << m_loader;
 
   // set up buffers
   // Define our verts
@@ -151,7 +164,6 @@ void BasicWidget::initializeGL()
 
   // Define our indices
   static const std::vector<GLuint> idx = m_loader.get_idx();
-
 
   m_program.bind();
 

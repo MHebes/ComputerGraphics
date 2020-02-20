@@ -59,6 +59,7 @@ int ObjLoader::parse_file(const std::string filename)
   std::string type;  // should be v, vn, f, etc.
 
   while (std::getline(infile, line)) {
+    ss.clear();
     ss.str(line);
 
     ss >> type;

@@ -15,6 +15,7 @@ class BasicWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
 private:
   void createShaders();
+  void loadObj(const std::string filename);
 
   static QString m_vert_shader_src;
   static QString m_frag_shader_src;
@@ -28,6 +29,10 @@ private:
   QMatrix4x4 m_model;
   QMatrix4x4 m_view;
   QMatrix4x4 m_projection;
+
+  QVector3D m_eye;
+  QVector3D m_center;
+  QVector3D m_up;
 
 protected:
   // Required interaction overrides
