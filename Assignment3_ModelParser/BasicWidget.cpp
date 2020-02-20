@@ -7,7 +7,7 @@ BasicWidget::BasicWidget(QWidget* parent)
       m_vertbuf(QOpenGLBuffer::VertexBuffer),
       m_idxbuf(QOpenGLBuffer::IndexBuffer),
       m_is_wireframe(false),
-      m_eye(0.0f, 0.0f, -5.0f),
+      m_eye(0.0f, 1.0f, -2.0f),
       m_center(0.0f, 0.0f, 0.0f),
       m_up(0.0f, 1.0f, 0.0f)
 {
@@ -17,7 +17,6 @@ BasicWidget::BasicWidget(QWidget* parent)
   m_model.setToIdentity();
   m_view.setToIdentity();
   m_projection.setToIdentity();
-  // m_view.translate(0.0f, 0.0f, -15.0f);
   m_view.lookAt(m_eye, m_center, m_up);
 }
 
@@ -33,8 +32,8 @@ BasicWidget::~BasicWidget()
 //////////////////////////////////////////////////////////////////////
 // Privates
 
-static const std::string BUNNY_OBJ = "../objects/bunny_centered.obj";
-static const std::string MONKEY_OBJ = "../objects/monkey_centered.obj";
+static const std::string OBJ_FILE = "../objects/bunny_centered.obj";
+static const std::string OBJ_FILE_ALT = "../objects/monkey_centered.obj";
 
 QString BasicWidget::m_vert_shader_src =
     "#version 330\n"
@@ -94,8 +93,8 @@ void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
     update();  // We call update after we handle a key press to trigger a redraw when we are ready
   } else if (keyEvent->key() == Qt::Key_1) {
     qDebug() << "1 Pressed";
-    m_loader:
-    update();
+  } else if (keyEvent->key() == Qt::Key_2) {
+    qDebug() << "2 Pressed";
   } else if (keyEvent->key() == Qt::Key_Left) {
     qDebug() << "Left Arrow Pressed";
     m_model.rotate(-10.0f, 0.0f, 1.0f, 0.0f);
@@ -154,7 +153,7 @@ void BasicWidget::initializeGL()
   createShaders();
 
   // read object file
-  if (m_loader.parse_file(BUNNY_OBJ) != EXIT_SUCCESS) {
+  if (m_loader.parse_file(OBJ_FILE) != EXIT_SUCCESS) {
     perror("Error opening file: ");
   }
 
@@ -188,14 +187,11 @@ void BasicWidget::initializeGL()
   m_program.setAttributeBuffer(0, GL_FLOAT, 0, 3);
 
   m_idxbuf.bind();
-  // m_program.enableAttributeArray(0);
-  // m_program.setAttributeBuffer(0, GL_UNSIGNED_INT, 0, )
 
   m_vao.release();
   m_program.release();
 
   glViewport(0, 0, width(), height());
-  // glDisable(GL_DEPTH_TEST);
 }
 
 void BasicWidget::resizeGL(int w, int h) {
