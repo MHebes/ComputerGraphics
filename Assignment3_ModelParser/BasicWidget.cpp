@@ -5,11 +5,13 @@
 BasicWidget::BasicWidget(QWidget* parent)
     : QOpenGLWidget(parent),
       m_vertbuf(QOpenGLBuffer::VertexBuffer),
+      m_normalbuf(QOpenGLBuffer::VertexBuffer),
       m_idxbuf(QOpenGLBuffer::IndexBuffer),
       m_is_wireframe(false),
       m_eye(0.0f, 1.0f, -2.0f),
       m_center(0.0f, 0.0f, 0.0f),
-      m_up(0.0f, 1.0f, 0.0f)
+      m_up(0.0f, 1.0f, 0.0f),
+      m_light_pos(10.0f, 10.0f, 10.0f)
 {
   setFocusPolicy(Qt::StrongFocus);
 
@@ -35,29 +37,50 @@ BasicWidget::~BasicWidget()
 static const std::string OBJ_FILE = "../objects/bunny_centered.obj";
 static const std::string OBJ_FILE_ALT = "../objects/monkey_centered.obj";
 
-QString BasicWidget::m_vert_shader_src =
-    "#version 330\n"
+// Lighting code based on https://learnopengl.com/Lighting/Basic-Lighting
+QString BasicWidget::m_vert_shader_src = R"(
+#version 330
 
-    "layout(location = 0) in vec3 position;\n"
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 aNormal;
 
-    "uniform mat4 model;\n"
-    "uniform mat4 view;\n"
-    "uniform mat4 projection;\n"
+out vec3 fragPos;
+out vec3 normal;
 
-    "void main()\n"
-    "{\n"
-    // move everything according to camera pos/perspective and model position
-    "  gl_Position = projection * view * model * vec4(position, 1.0);\n"
-    "}\n";
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-QString BasicWidget::m_frag_shader_src =
-    "#version 330\n"
-    // just draw everything in red
-    "out vec4 color;\n"
-    "void main()\n"
-    "{\n"
-    "  color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
-    "}\n";
+void main()
+{
+  // move everything according to camera pos/perspective and model position
+  gl_Position = projection * view * model * vec4(position, 1.0);
+  fragPos = vec3(model * vec4(position, 1.0));
+  normal = aNormal;
+};
+)";
+
+QString BasicWidget::m_frag_shader_src = R"(
+#version 330
+
+in vec3 fragPos;
+in vec3 normal;
+
+// just make everything orange
+out vec4 color;
+
+uniform vec3 lightPos;
+
+void main()
+{
+  vec3 norm = normalize(normal);
+  vec3 lightDir = normalize(lightPos - fragPos);
+  float diff = max(dot(norm, lightDir), 0.0);
+  vec3 diffuse = diff * vec3(1.0f, 1.0f, 1.0f);
+
+  color = vec4(diffuse, 1.0);
+}
+)";
 
 
 void BasicWidget::createShaders()
@@ -158,10 +181,8 @@ void BasicWidget::initializeGL()
   }
 
   // set up buffers
-  // Define our verts
   static const std::vector<GLfloat> verts = m_loader.get_vertices();
-
-  // Define our indices
+  static const std::vector<GLfloat> norms = m_loader.get_normals();
   static const std::vector<GLuint> idx = m_loader.get_idx();
 
   m_program.bind();
@@ -171,6 +192,12 @@ void BasicWidget::initializeGL()
   m_vertbuf.create();
   m_vertbuf.bind();
   m_vertbuf.allocate(verts.data(), verts.size() * sizeof(GL_FLOAT));
+
+  // normal buffer
+  m_normalbuf.setUsagePattern(QOpenGLBuffer::StaticDraw);
+  m_normalbuf.create();
+  m_normalbuf.bind();
+  m_normalbuf.allocate(norms.data(), norms.size() * sizeof(GL_FLOAT));
 
   // index buffer
   m_idxbuf.setUsagePattern(QOpenGLBuffer::StaticDraw);
@@ -186,9 +213,16 @@ void BasicWidget::initializeGL()
   m_program.enableAttributeArray(0);
   m_program.setAttributeBuffer(0, GL_FLOAT, 0, 3);
 
+  m_normalbuf.bind();
+  m_program.enableAttributeArray(1);
+  m_program.setAttributeBuffer(1, GL_FLOAT, 0, 3);
+
   m_idxbuf.bind();
 
   m_vao.release();
+
+  m_program.setUniformValue("lightPos", m_light_pos);
+
   m_program.release();
 
   glViewport(0, 0, width(), height());
@@ -197,7 +231,7 @@ void BasicWidget::initializeGL()
 void BasicWidget::resizeGL(int w, int h) {
   glViewport(0, 0, w, h);
 
-  m_projection.perspective(70.0f, (float)w/h, 0.0f, 100.0f);
+  m_projection.perspective(70.0f, (float)w/h, 0.01f, 100.0f);
 
   m_program.bind();
 
@@ -208,11 +242,10 @@ void BasicWidget::resizeGL(int w, int h) {
 
 void BasicWidget::paintGL()
 {
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_CULL_FACE);
-
   glClearColor(0.f, 0.f, 0.f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
 
   // TODO:  render.
   m_program.bind();

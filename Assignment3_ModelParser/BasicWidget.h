@@ -34,6 +34,8 @@ private:
   QVector3D m_center;
   QVector3D m_up;
 
+  QVector3D m_light_pos;
+
 protected:
   // Required interaction overrides
   void keyReleaseEvent(QKeyEvent* keyEvent) override;
@@ -44,6 +46,7 @@ protected:
   void paintGL() override;
 
   QOpenGLBuffer m_vertbuf;
+  QOpenGLBuffer m_normalbuf;
   QOpenGLBuffer m_idxbuf;
   QOpenGLShaderProgram m_program;
   QOpenGLDebugLogger m_logger;
