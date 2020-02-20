@@ -56,7 +56,7 @@ void main()
   // move everything according to camera pos/perspective and model position
   gl_Position = projection * view * model * vec4(position, 1.0);
   fragPos = vec3(model * vec4(position, 1.0));
-  normal = aNormal;
+  normal = vec3(model * vec4(aNormal, 1.0));
 };
 )";
 
