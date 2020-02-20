@@ -8,7 +8,7 @@ BasicWidget::BasicWidget(QWidget* parent)
       m_normalbuf(QOpenGLBuffer::VertexBuffer),
       m_idxbuf(QOpenGLBuffer::IndexBuffer),
       m_is_wireframe(false),
-      m_eye(0.0f, 1.0f, -2.0f),
+      m_eye(0.0f, 1.0f, 2.0f),
       m_center(0.0f, 0.0f, 0.0f),
       m_up(0.0f, 1.0f, 0.0f),
       m_light_pos(10.0f, 10.0f, 10.0f)
