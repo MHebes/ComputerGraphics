@@ -26,12 +26,12 @@ Renderable::~Renderable()
 
 void Renderable::createShaders()
 {
-	QString vertexFilename = "../../vert.glsl";
+	QString vertexFilename = "../vert.glsl";
 	bool ok = shader_.addShaderFromSourceFile(QOpenGLShader::Vertex, vertexFilename);
 	if (!ok) {
 		qDebug() << shader_.log();
 	}
-	QString fragmentFilename = "../../frag.glsl";
+	QString fragmentFilename = "../frag.glsl";
 	ok = shader_.addShaderFromSourceFile(QOpenGLShader::Fragment, fragmentFilename);
 	if (!ok) {
 		qDebug() << shader_.log();
