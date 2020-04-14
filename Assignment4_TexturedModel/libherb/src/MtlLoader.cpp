@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 
+#define DEFAULT_TEXTURE "@DEFAULT_TEXTURE@" // CMAKE: DEFAULT_TEXTURE
+
 MtlLoader::MtlLoader() : m_map_Kd() {
 }
 
@@ -32,6 +34,8 @@ int MtlLoader::parse_file(const std::string filename)
       ss >> m_map_Kd;
     }
   }
+
+  if (m_map_Kd.empty()) m_map_Kd = DEFAULT_TEXTURE; // use default texture if we don't find one
 
   return 0;
 }

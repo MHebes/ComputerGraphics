@@ -72,6 +72,9 @@ int ObjLoader::parse_file(const std::string filename)
   m_indices.clear();
   m_mtllib.clear();
 
+  const size_t last_slash_idx = filename.find_last_of("\\/");
+  m_basedir = filename.substr(0, last_slash_idx + 1);
+
   // intermediary vectors read from the obj file itself
   QVector<QVector3D> tmp_normals;
   QVector<QVector3D> tmp_vertices;
@@ -153,6 +156,20 @@ int ObjLoader::parse_file(const std::string filename)
 
   // TODO shouldn't really fail here
   assert(m_uses_uvs && m_uses_normals);
+
+  for (const QVector3D& e : tmp_vertices) {
+    std::cout << "v " << e.x() << " " << e.y() << " " << e.z() << "\n";
+  }
+  for (const QVector2D& e : tmp_uvs) {
+    std::cout << "vt " << e.x() << " " << e.y() << "\n";
+  }
+  for (const QVector3D& e : tmp_normals) {
+    std::cout << "vn " << e.x() << " " << e.y() << " " << e.z() << "\n";
+  }
+  for (const triface& e : tmp_faces) {
+    std::cout << "f " << e << "\n";
+  }
+  std::cout << std::endl;
 
   // convert the things we got from the obj to usable buffers
   obj_to_vbo(tmp_vertices, tmp_uvs, tmp_normals, tmp_faces, m_indices, m_vertices, m_uvs, m_normals);

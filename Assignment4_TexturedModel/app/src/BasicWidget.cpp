@@ -4,46 +4,7 @@
 
 #include "MtlLoader.h"
 #include "ObjLoader.h"
-
-class ObjMesh : public Renderable {
-public:
-  ObjMesh(std::string filename, float x, float y, float z, float rx, float ry,
-          float rz, float rot_speed)
-      : Renderable(), m_obj()
-  {
-    qDebug() << QDir::currentPath();
-
-    // TODO(mike) error handling
-
-    // parse obj, get texture file name
-    if (m_obj.parse_file(filename) != EXIT_SUCCESS) {
-      std::cout << "Could not read file " << filename << std::endl;
-      assert(false);
-    }
-    MtlLoader mtl;
-    mtl.parse_file(m_obj.get_mtllib());
-
-    QVector<QVector3D> pos = m_obj.get_vertices();
-    QVector<QVector3D> norm = m_obj.get_normals();
-    QVector<QVector2D> texCoord = m_obj.get_uvs();
-    QVector<unsigned int> idx = m_obj.get_indices();
-
-    init(pos, norm, texCoord, idx, QString::fromStdString(mtl.get_map_Kd()));
-
-    QMatrix4x4 mat;
-    mat.setToIdentity();
-    mat.translate(x, y, z);
-    setModelMatrix(mat);
-    setRotationSpeed(rot_speed);
-
-    QVector3D axis(rx, ry, rz);
-    axis.normalize();
-    setRotationAxis(axis);
-  }
-
-private:
-  ObjLoader m_obj;
-};
+#include "ObjMesh.h"
 
 //////////////////////////////////////////////////////////////////////
 // Publics
@@ -89,7 +50,7 @@ void BasicWidget::initializeGL()
 
   // FIRST CAT
 
-  renderables_.push_back(new ObjMesh(m_objfile, -0.5, 0, 0, 1.0f, 1.0f, 0.0f, 1));
+  renderables_.push_back(new ObjMesh(m_objfile, 0, 0, 0, 0, 1, 0, 0.5));
 
   glViewport(0, 0, width(), height());
   frameTimer_.start();

@@ -11,12 +11,36 @@
 #include <QVector3D>
 #include <cmath>
 #include <vector>
+#include <ostream>
 
 // face is 9 indices: v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
 typedef struct triface {
   bool present[6];  //    vt1,vn1,    vt2,vn2,    vt3,vn3
   int idx[9];       // v1,vt1,vn1, v2,vt2,vn2, v3,vt3,vn3
 } triface;
+
+
+std::ostream& operator<<(std::ostream& os, const triface& f)
+{
+  bool begin = true;
+
+  os << f.idx[0];
+  if (f.present[0] || f.present[1]) os << '/';
+  if (f.present[0]) os << f.idx[1];
+  if (f.present[1]) os << '/' << f.idx[2];
+
+  os << ' ' << f.idx[3];
+  if (f.present[2] || f.present[3]) os << '/';
+  if (f.present[2]) os << f.idx[4];
+  if (f.present[3]) os << '/' << f.idx[5];
+
+  os << ' ' << f.idx[6];
+  if (f.present[4] || f.present[5]) os << '/';
+  if (f.present[4]) os << f.idx[7];
+  if (f.present[5]) os << '/' << f.idx[8];
+
+  return os;
+}
 
 // floating point cmp
 bool is_near(float v1, float v2) { return fabs(v1 - v2) < 0.01f; }
@@ -81,11 +105,11 @@ void obj_to_vbo(QVector<QVector3D>& in_verts,
     // For each vertex
     for (int i = 0; i < 3; i++) {
       // Extract data from the face
-      unsigned int vertidx = f.idx[3 * i];
+      unsigned int vertidx = f.idx[3 * i] - 1;
       bool has_uv = f.present[2 * i];
-      unsigned int uvidx = f.idx[3 * i + 1];
+      unsigned int uvidx = f.idx[3 * i + 1] - 1;
       bool has_norm = f.present[2 * i + 1];
-      unsigned int normidx = f.idx[3 * i + 2];
+      unsigned int normidx = f.idx[3 * i + 2] - 1;
 
       QVector3D vert = in_verts[vertidx];
       QVector2D uv = has_uv ? in_uvs[uvidx] : zero2d;

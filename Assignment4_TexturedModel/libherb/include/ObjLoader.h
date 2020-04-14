@@ -36,10 +36,13 @@ public:
   QVector<QVector2D> get_uvs() const { return m_uvs; }
   QVector<unsigned int> get_indices() const { return m_indices; }
 
-  std::string get_mtllib() const { return m_mtllib; }
+  std::string get_mtllib() const { return m_basedir + m_mtllib; }
 
   bool const uses_uvs() const { return m_uses_uvs; }
   bool const uses_normals() const { return m_uses_normals; }
+
+  // for debugging
+  void print();
 
 private:
   QVector<QVector3D> m_normals;
@@ -47,6 +50,7 @@ private:
   QVector<QVector2D> m_uvs;
   QVector<unsigned int> m_indices;
   std::string m_mtllib;
+  std::string m_basedir;
   bool m_uses_uvs;
   bool m_uses_normals;
 };
