@@ -17,8 +17,9 @@ public:
    * @return  EXIT_SUCCESS on success
    */
   int parse_file(const std::string filename);
-  std::string get_map_Kd() const { return m_map_Kd; }
+  std::string get_map_Kd() const { return m_basedir + m_map_Kd; }
 
 private:
+  std::string m_basedir;
   std::string m_map_Kd;
 };

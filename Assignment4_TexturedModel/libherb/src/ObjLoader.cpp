@@ -1,5 +1,4 @@
 #include "ObjLoader.h"
-#include "ObjToVboIdx.h"
 
 #include <unistd.h>
 
@@ -8,6 +7,8 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+
+#include "ObjToVboIdx.h"
 
 ObjLoader::ObjLoader() {}
 
@@ -108,7 +109,7 @@ int ObjLoader::parse_file(const std::string filename)
       QVector3D v(x, y, z);
       tmp_vertices << v;
     }
-    else if (type == "vt") { // vertex texture
+    else if (type == "vt") {  // vertex texture
       float u;
       float v;
 
@@ -121,6 +122,8 @@ int ObjLoader::parse_file(const std::string filename)
       float x;
       float y;
       float z;
+
+      ss >> x >> y >> z;
 
       QVector3D v(x, y, z);
       tmp_normals << v;
@@ -140,7 +143,7 @@ int ObjLoader::parse_file(const std::string filename)
 
       tmp_faces << f;
     }
-    else if (type == "mtllib") { // material
+    else if (type == "mtllib") {  // material
       ss >> m_mtllib;
     }
   }
@@ -149,7 +152,8 @@ int ObjLoader::parse_file(const std::string filename)
     // use the first face item to detemine if we're using normals and uvs or not
     m_uses_uvs = tmp_faces[0].present[0];
     m_uses_normals = tmp_faces[0].present[1];
-  } else {
+  }
+  else {
     m_uses_uvs = false;
     m_uses_normals = false;
   }
@@ -169,10 +173,33 @@ int ObjLoader::parse_file(const std::string filename)
   for (const triface& e : tmp_faces) {
     std::cout << "f " << e << "\n";
   }
-  std::cout << std::endl;
+  std::cout << std::endl << std::endl;
 
   // convert the things we got from the obj to usable buffers
-  obj_to_vbo(tmp_vertices, tmp_uvs, tmp_normals, tmp_faces, m_indices, m_vertices, m_uvs, m_normals);
+  obj_to_vbo(tmp_vertices, tmp_uvs, tmp_normals, tmp_faces, m_indices,
+             m_vertices, m_uvs, m_normals);
+
+  print();
 
   return EXIT_SUCCESS;
+}
+
+void ObjLoader::print()
+{
+  // print all vertices
+  for (size_t i = 0; i < m_vertices.size(); i++) {
+    QVector3D v = m_vertices[i];
+    QVector2D vt = m_uvs[i];
+    QVector3D vn = m_normals[i];
+    std::cout << i << ":\t(" << v.x() << ", " << v.y() << ", " << v.z() << "),\t("
+              << vt.x() << ", " << vt.y() << "),\t(" << vn.x() << ", " << vn.y() << ", " << vn.z() << ")\n";
+  }
+
+  // print face indices
+  for (size_t i = 0; i < m_indices.size(); i += 3) {
+    std::cout << "{ " << m_indices[i] << ", " << m_indices[i + 1] << ", "
+              << m_indices[i + 2] << "}\n";
+  }
+
+  std::cout << std::endl;
 }
