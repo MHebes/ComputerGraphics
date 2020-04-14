@@ -10,13 +10,9 @@
 
 ## Modify this section
 
-- How many hours did it take you to complete this lab?
-- Did you collaborate with any other students/TAs/Professors?
-- Did you use any external resources? (Cite them below)
-  - tbd
-  - tbd
-- (Optional) What was your favorite part of the lab?
-- (Optional) How would you improve the lab?
+- How many hours did it take you to complete this lab? 1
+- Did you collaborate with any other students/TAs/Professors? no
+- Did you use any external resources? (Cite them below) no
 
 ## Logistics
 
