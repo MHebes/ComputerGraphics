@@ -85,11 +85,11 @@ void Renderable::init(const QVector<QVector3D>& positions, const QVector<QVector
 	// NOTE:  We do not currently do anything with normals -- we just
 	// have it here for a later implementation!
 	// We need to make sure our sizes all work out ok.
-	// if (positions.size() != texCoords.size() ||
-	// 	positions.size() != normals.size()) {
-	// 	qDebug() << "[Renderable]::init() -- positions size mismatch with normals/texture coordinates";
-	// 	return;
-	// }
+	if (positions.size() != texCoords.size() ||
+		positions.size() != normals.size()) {
+		qDebug() << "[Renderable]::init() -- positions size mismatch with normals/texture coordinates";
+		return;
+	}
 
 	// Set our model matrix to identity
 	m_modelMatrix.setToIdentity();

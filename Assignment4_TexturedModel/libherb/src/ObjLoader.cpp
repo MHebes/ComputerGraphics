@@ -1,5 +1,5 @@
 #include "ObjLoader.h"
-#include "VboIndexer.h"
+#include "ObjToVboIdx.h"
 
 #include <unistd.h>
 
@@ -10,49 +10,6 @@
 #include <tuple>
 
 ObjLoader::ObjLoader() {}
-
-std::ostream& operator<<(std::ostream& os, const triface& f)
-{
-  bool begin = true;
-
-  os << f.idx[0];
-  if (f.present[0] || f.present[1]) os << '/';
-  if (f.present[0]) os << f.idx[1];
-  if (f.present[1]) os << '/' << f.idx[2];
-
-  os << ' ' << f.idx[3];
-  if (f.present[2] || f.present[3]) os << '/';
-  if (f.present[2]) os << f.idx[4];
-  if (f.present[3]) os << '/' << f.idx[5];
-
-  os << ' ' << f.idx[6];
-  if (f.present[4] || f.present[5]) os << '/';
-  if (f.present[4]) os << f.idx[7];
-  if (f.present[5]) os << '/' << f.idx[8];
-
-  return os;
-}
-
-// TODO(mike) this is broken ish
-std::ostream& operator<<(std::ostream& os, const ObjLoader& loader)
-{
-  const auto vertices = loader.get_vertices();
-  const auto normals = loader.get_normals();
-  // const auto faces = loader.get_faces();
-
-  for (int i = 0; i < vertices.size(); i ++) {
-    os << "v " << vertices.at(i).x << " " << vertices.at(i).y << " " << vertices.at(i).z << std::endl;
-  }
-
-  for (int i = 0; i < normals.size(); i ++) {
-    os << "vn " << normals.at(i).x << " " << normals.at(i).y << " " << normals.at(i).z << std::endl;
-  }
-  // for (const triface& f : faces) {
-  //   os << "f " << f << std::endl;
-  // }
-
-  return os;
-}
 
 /**
  * @brief Helper to parse one face vertex
@@ -116,10 +73,10 @@ int ObjLoader::parse_file(const std::string filename)
   m_mtllib.clear();
 
   // intermediary vectors read from the obj file itself
-  std::vector<QVector3D> tmp_normals;
-  std::vector<QVector3D> tmp_vertices;
-  std::vector<QVector2D> tmp_uvs;
-  std::vector<triface> tmp_faces;
+  QVector<QVector3D> tmp_normals;
+  QVector<QVector3D> tmp_vertices;
+  QVector<QVector2D> tmp_uvs;
+  QVector<triface> tmp_faces;
 
   std::ifstream infile(filename);
 
@@ -145,7 +102,8 @@ int ObjLoader::parse_file(const std::string filename)
 
       ss >> x >> y >> z;
 
-      tmp_vertices.emplace_back(x, y, z);
+      QVector3D v(x, y, z);
+      tmp_vertices << v;
     }
     else if (type == "vt") { // vertex texture
       float u;
@@ -153,16 +111,16 @@ int ObjLoader::parse_file(const std::string filename)
 
       ss >> u >> v;
 
-      tmp_uvs.emplace_back(u, v);
+      QVector2D p(u, v);
+      tmp_uvs << p;
     }
     else if (type == "vn") {  // normal
       float x;
       float y;
       float z;
 
-      ss >> x >> y >> z;
-
-      tmp_normals.emplace_back(x, y, z);
+      QVector3D v(x, y, z);
+      tmp_normals << v;
     }
     else if (type == "f") {  // face
       triface f;
@@ -177,7 +135,7 @@ int ObjLoader::parse_file(const std::string filename)
       parse_face_vert(&(f.present[2]), &(f.idx[3]), b);
       parse_face_vert(&(f.present[4]), &(f.idx[6]), c);
 
-      tmp_faces.push_back(f);
+      tmp_faces << f;
     }
     else if (type == "mtllib") { // material
       ss >> m_mtllib;

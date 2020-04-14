@@ -23,35 +23,10 @@ public:
     MtlLoader mtl;
     mtl.parse_file(m_obj.get_mtllib());
 
-    QVector<QVector3D> pos;
-    QVector<QVector3D> norm;
-    QVector<QVector2D> texCoord;
-    QVector<unsigned int> idx;
-
-    // load verts into q-friendly vector
-    std::vector<float> verts = m_obj.get_vertices();
-    for (size_t i = 0; i < verts.size(); i += 3) {
-      pos << QVector3D(verts.at(i), verts.at(i+1), verts.at(i+2));
-    }
-
-    // load norms
-    std::vector<float> norms = m_obj.get_normals();
-    for (size_t i = 0; i < norms.size(); i += 3) {
-      pos << QVector3D(norms.at(i), norms.at(i+1), norms.at(i+2));
-    }
-
-    // load texcoords
-    std::vector<float> texcoords = m_obj.get_texcoords();
-    for (size_t i = 0; i < norms.size(); i += 2) {
-      pos << QVector2D(norms.at(i), norms.at(i+1));
-    }
-
-    // load idxs
-    // TODO this only loads the mesh ones rn.. normals will be fucked up
-    std::vector<triface> faces = m_obj.get_faces();
-    for (size_t i = 0; i < faces.size(); i++) {
-      idx << faces.at(i).idx[0] << faces.at(i).idx[3] << faces.at(i).idx[6];
-    }
+    QVector<QVector3D> pos = m_obj.get_vertices();
+    QVector<QVector3D> norm = m_obj.get_normals();
+    QVector<QVector2D> texCoord = m_obj.get_uvs();
+    QVector<unsigned int> idx = m_obj.get_indices();
 
     init(pos, norm, texCoord, idx, QString::fromStdString(mtl.get_map_Kd()));
 
