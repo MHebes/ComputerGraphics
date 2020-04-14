@@ -5,7 +5,9 @@ target_include_directories(herb PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_sources(herb PUBLIC
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Renderable.cpp")
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Renderable.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/ObjLoader.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/MtlLoader.cpp")
 
 ## Linking to Qt5
 
