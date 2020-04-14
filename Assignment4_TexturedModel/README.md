@@ -14,6 +14,8 @@
   * (tbd if any)
   * (tbd if any)
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+
+Note: I've reorganized my project quite a bit to use a graphics library (herb/) and an application which links it (app/). **The App executable is in ./app/App**
   
 ## Description
 
