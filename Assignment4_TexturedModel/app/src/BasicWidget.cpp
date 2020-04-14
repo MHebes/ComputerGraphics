@@ -1,5 +1,7 @@
 #include "BasicWidget.h"
 
+#include <QtCore>
+#include <QtGui>
 #include <iostream>
 
 #include "MtlLoader.h"
@@ -50,7 +52,7 @@ void BasicWidget::initializeGL()
 
   // FIRST CAT
 
-  renderables_.push_back(new ObjMesh(m_objfile, 0, 0, 0, 0, 1, 0, 0.5));
+  renderables_.push_back(new ObjMesh(m_objfile, 0, 0, -2, 0, 1, 0, 0.25));
 
   glViewport(0, 0, width(), height());
   frameTimer_.start();
@@ -80,7 +82,7 @@ void BasicWidget::resizeGL(int w, int h)
 
 void BasicWidget::paintGL()
 {
-  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
 
   glClearColor(0.f, 0.f, 0.f, 1.f);

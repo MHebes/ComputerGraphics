@@ -3,14 +3,16 @@
 #include <fstream>
 #include <sstream>
 
-#define DEFAULT_TEXTURE "@DEFAULT_TEXTURE@" // CMAKE: DEFAULT_TEXTURE
+#define DEFAULT_TEXTURE "@DEFAULT_TEXTURE@"  // CMAKE: DEFAULT_TEXTURE
 
-MtlLoader::MtlLoader() : m_map_Kd() {
-}
+MtlLoader::MtlLoader() : m_map_Kd() {}
 
 int MtlLoader::parse_file(const std::string filename)
 {
   m_map_Kd.clear();
+
+  const size_t last_slash_idx = filename.find_last_of("\\/");
+  m_basedir = filename.substr(0, last_slash_idx + 1);
 
   std::ifstream infile(filename);
 
@@ -35,7 +37,10 @@ int MtlLoader::parse_file(const std::string filename)
     }
   }
 
-  if (m_map_Kd.empty()) m_map_Kd = DEFAULT_TEXTURE; // use default texture if we don't find one
+  if (m_map_Kd.empty()) {
+    m_map_Kd = DEFAULT_TEXTURE;  // use default texture if we don't find one
+    m_basedir = "";
+  }
 
   return 0;
 }

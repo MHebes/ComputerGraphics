@@ -6,16 +6,24 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name(At most 1 partner for this Assignment): 
-* How many hours did it take you to complete this Assignment? 
-* Did you collaborate or share ideas with any other students/TAs/Professors? 
+* Name and partners name(At most 1 partner for this Assignment): Michael Hebert (no partner)
+* How many hours did it take you to complete this Assignment? 6 hours
+* Did you collaborate or share ideas with any other students/TAs/Professors? no
 * Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
-* (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+   * http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
+* (Optional) What was the most interesting part of the assignment? How would you improve this assignment? When it finally worked!
 
 Note: I've reorganized my project quite a bit to use a graphics library (herb/) and an application which links it (app/). **The App executable is in ./app/App**
+
+**To build and run the project:**
+```sh
+mkdir build
+cd build
+cmake <QT flags> ..
+make -j8
+cd app
+./App ../../objects/cube.obj
+```
   
 ## Description
 

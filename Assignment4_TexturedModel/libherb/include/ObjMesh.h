@@ -1,12 +1,17 @@
 #pragma once
 
-#include <QtCore>
-#include <QtGui>
+#include <QDebug>
+#include <QDir>
+#include <QMatrix4x4>
+#include <QString>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector>
 #include <iostream>
 #include <string>
 
-#include "ObjLoader.h"
 #include "MtlLoader.h"
+#include "ObjLoader.h"
 #include "Renderable.h"
 
 class ObjMesh : public Renderable {
@@ -22,7 +27,7 @@ public:
     // parse obj, get texture file name
     if (m_obj.parse_file(filename) != EXIT_SUCCESS) {
       std::cout << "Could not read file " << filename << std::endl;
-      assert(false);
+      exit(1);
     }
     MtlLoader mtl;
     std::cout << "mtllib = " << m_obj.get_mtllib() << std::endl;
@@ -34,7 +39,8 @@ public:
     QVector<QVector2D> texCoord = m_obj.get_uvs();
     QVector<unsigned int> idx = m_obj.get_indices();
 
-    init(pos, norm, texCoord, idx, QString::fromStdString(mtl.get_map_Kd()));
+    init(pos, norm, texCoord, idx, QString::fromStdString(mtl.get_map_Kd()),
+         true, true);
 
     QMatrix4x4 mat;
     mat.setToIdentity();
