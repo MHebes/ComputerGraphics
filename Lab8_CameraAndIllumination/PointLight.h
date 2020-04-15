@@ -7,6 +7,8 @@
 struct PointLight {
   QVector3D position;
   float ambientIntensity;
+  float diffuseIntensity;
+  float specularIntensity;
   float constant;
   float linear;
   float quadratic;
@@ -19,6 +21,8 @@ struct PointLight {
 inline void pointlight_set_uniform(QOpenGLShaderProgram& shader, const PointLight& light, std::string uniformName) {
   shader.setUniformValue((uniformName + ".position").c_str(),   light.position);
   shader.setUniformValue((uniformName + ".ambientIntensity").c_str(),   light.ambientIntensity);
+  shader.setUniformValue((uniformName + ".diffuseIntensity").c_str(),   light.diffuseIntensity);
+  shader.setUniformValue((uniformName + ".specularIntensity").c_str(),   light.specularIntensity);
   shader.setUniformValue((uniformName + ".constant").c_str(),   light.constant);
   shader.setUniformValue((uniformName + ".linear").c_str(), light.linear);
   shader.setUniformValue((uniformName + ".quadratic").c_str(),  light.quadratic);

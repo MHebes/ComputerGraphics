@@ -36,11 +36,13 @@ void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
   // Handle key events here.
   if (keyEvent->key() == Qt::Key_Left) {
     qDebug() << "Left Arrow Pressed";
+    m_lights[0].specularIntensity -= 5.0f;
     update();  // We call update after we handle a key press to trigger a redraw
                // when we are ready
   }
   else if (keyEvent->key() == Qt::Key_Right) {
     qDebug() << "Right Arrow Pressed";
+    m_lights[0].specularIntensity += 5.0f;
     update();  // We call update after we handle a key press to trigger a redraw
                // when we are ready
   }
@@ -136,14 +138,42 @@ void BasicWidget::initializeGL()
   renderables_.push_back(floor);
 
   m_lights[0] = {
-    {-2.0f, 2.0f, -2.0f},  // position
-    1.0f,                 // ambientIntensity
+    {0.8f, 0.5f, -0.5f},  // position
+    0.0f,                 // ambientIntensity
+    3.0f,                 // diffuseIntensity
+    10.0f,                // specularIntensity
     3.0f,                 // constant
     0.0f,                 // linear
     0.2f,                 // quadratic
     {1.0f, 1.0f, 1.0f},   // ambient
-    {1.0f, 1.0f, 1.0f},   // diffuse
-    {1.0f, 1.0f, 1.0f},   // specular
+    {0.0f, 0.2f, 1.0f},   // diffuse
+    {0.0f, 0.2f, 1.0f},   // specular
+  };
+  
+  m_lights[1] = {
+    {0.0f, 0.5f, -0.5f},  // position
+    0.0f,                 // ambientIntensity
+    1.0f,                 // diffuseIntensity
+    5.0f,                 // specularIntensity
+    3.0f,                 // constant
+    0.0f,                 // linear
+    0.2f,                 // quadratic
+    {1.0f, 1.0f, 1.0f},   // ambient
+    {1.0f, 0.2f, 0.2f},   // diffuse
+    {1.0f, 0.2f, 0.2f},   // specular
+  };
+  
+  m_lights[2] = {
+    {0.4f, 0.4f, -0.8f},  // position
+    0.0f,                 // ambientIntensity
+    1.0f,                 // diffuseIntensity
+    5.0f,                 // specularIntensity
+    3.0f,                 // constant
+    0.0f,                 // linear
+    0.2f,                 // quadratic
+    {1.0f, 1.0f, 1.0f},   // ambient
+    {0.0f, 1.0f, 0.2f},   // diffuse
+    {0.0f, 1.0f, 0.2f},   // specular
   };
 
   glViewport(0, 0, width(), height());

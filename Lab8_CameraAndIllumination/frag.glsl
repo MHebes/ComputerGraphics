@@ -1,5 +1,7 @@
 #version 330
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 3
+
+// Credit to https://learnopengl.com/Lighting/Basic-Lighting for much of the lighting calcs
 
 // Take in our texture coordinate from our vertex shader
 in vec2 texCoords;
@@ -15,6 +17,8 @@ out vec4 fragColor;
 struct PointLight {
   vec3 position;
   float ambientIntensity;
+  float diffuseIntensity;
+  float specularIntensity;
 
   float constant;
   float linear;
@@ -25,6 +29,7 @@ struct PointLight {
   vec3 specular;
 };
 
+// for PointLight
 vec3 ComputeLighting(PointLight light, vec3 norm, vec3 fragPos, vec3 viewDir) {
   vec3 lightDir = normalize(light.position - fragPos);
 
@@ -41,26 +46,29 @@ vec3 ComputeLighting(PointLight light, vec3 norm, vec3 fragPos, vec3 viewDir) {
                       light.quadratic * (distance * distance));
 
   // combine
-  vec3 ambient = light.ambient;
-  vec3 diffuse = light.diffuse * diff;
-  vec3 specular = light.specular * spec;
+  vec3 ambient = light.ambient * light.ambientIntensity;
+  vec3 diffuse = light.diffuse * diff * light.diffuseIntensity;
+  vec3 specular = light.specular * spec * light.specularIntensity;
 
   return attenuation * (ambient + diffuse + specular);
 }
 
 // Maintain our uniforms.
 uniform sampler2D tex;              // our primary texture
-uniform mat4 view;                  // we need the view matrix for highlights
-uniform PointLight pointLights[1];  // Our lights
+uniform vec3 viewPos;               // can't calculate from view
+uniform PointLight pointLights[NR_POINT_LIGHTS];  // Our lights
 
 void main() {
   // Set our output fragment color to whatever we pull from our input texture (Note, change 'tex' to whatever the sampler is named)
   vec3 diffuse = texture(tex, texCoords).rgb;
 
   // Calculate viewDir
-  vec3 viewPos = vec3(inverse(view)[3]);
   vec3 viewDir = normalize(viewPos - fragPos);
-  vec3 lighting = ComputeLighting(pointLights[0], norm, fragPos, viewDir);
+
+  vec3 lighting;
+
+  for (int i = 0; i < NR_POINT_LIGHTS; i++)
+    lighting += ComputeLighting(pointLights[i], norm, fragPos, viewDir);
 
   // final color + how dark or light
   fragColor = vec4(diffuse * lighting, 1.0);

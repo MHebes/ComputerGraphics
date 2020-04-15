@@ -132,7 +132,7 @@ void Renderable::update(const qint64 msSinceLastFrame)
 	}
 }
 
-void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection, struct PointLight lights[1])
+void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection, struct PointLight lights[3])
 {
 	// Create our model matrix.
 	QMatrix4x4 rotMatrix;
@@ -148,11 +148,16 @@ void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMa
 	QMatrix4x4 id;
 	id.setToIdentity();
 	shader_.setUniformValue("modelMatrix", modelMat);
+	QVector3D cameraPos = view.inverted().column(3).toVector3D();
+	// qDebug() << cameraPos;
+	shader_.setUniformValue("viewPos", cameraPos);
 	shader_.setUniformValue("viewMatrix", view);
 	shader_.setUniformValue("projectionMatrix", projection);
 	
 	// Setup lights!
 	pointlight_set_uniform(shader_, lights[0], "pointLights[0]");
+	pointlight_set_uniform(shader_, lights[1], "pointLights[1]");
+	pointlight_set_uniform(shader_, lights[2], "pointLights[2]");
 
 	vao_.bind();
 	texture_.bind();
