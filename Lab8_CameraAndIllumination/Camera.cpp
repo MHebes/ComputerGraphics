@@ -26,13 +26,13 @@ QVector3D Camera::position() const
 
 void Camera::translateCamera(const QVector3D& delta)
 {
-	// TODO:  Implement camera translation
+	lookAt_ += delta;
+	position_ += delta;
 }
 
 void Camera::setGazeVector(const QVector3D& gaze)
 {
 	lookAt_ = gaze + position_;
-	lookAt_.normalize();
 }
 
 QVector3D Camera::gazeVector() const

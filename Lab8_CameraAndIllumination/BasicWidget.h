@@ -6,6 +6,7 @@
 
 #include "Renderable.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 /**
  * This is just a basic OpenGL widget that will allow a change of background color.
@@ -21,6 +22,7 @@ private:
   QElapsedTimer frameTimer_;
 
   QVector<Renderable*> renderables_;
+  PointLight m_lights[1];
 
   QOpenGLDebugLogger logger_;
 

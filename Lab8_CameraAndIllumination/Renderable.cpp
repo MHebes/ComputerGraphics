@@ -1,7 +1,11 @@
 #include "Renderable.h"
+#include "PointLight.h"
 
 #include <QtGui>
 #include <QtOpenGL>
+
+#define VERT_SHADER "../vert.glsl"
+#define FRAG_SHADER "../frag.glsl"
 
 Renderable::Renderable() : vbo_(QOpenGLBuffer::VertexBuffer), ibo_(QOpenGLBuffer::IndexBuffer), texture_(QOpenGLTexture::Target2D), numTris_(0), vertexSize_(0), rotationAxis_(0.0, 0.0, 1.0), rotationSpeed_(0.25)
 {
@@ -26,12 +30,12 @@ Renderable::~Renderable()
 
 void Renderable::createShaders()
 {
-	QString vertexFilename = "../../vert.glsl";
+	QString vertexFilename = VERT_SHADER;
 	bool ok = shader_.addShaderFromSourceFile(QOpenGLShader::Vertex, vertexFilename);
 	if (!ok) {
 		qDebug() << shader_.log();
 	}
-	QString fragmentFilename = "../../frag.glsl";
+	QString fragmentFilename = FRAG_SHADER;
 	ok = shader_.addShaderFromSourceFile(QOpenGLShader::Fragment, fragmentFilename);
 	if (!ok) {
 		qDebug() << shader_.log();
@@ -128,7 +132,7 @@ void Renderable::update(const qint64 msSinceLastFrame)
 	}
 }
 
-void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection)
+void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection, struct PointLight lights[1])
 {
 	// Create our model matrix.
 	QMatrix4x4 rotMatrix;
@@ -146,6 +150,9 @@ void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMa
 	shader_.setUniformValue("modelMatrix", modelMat);
 	shader_.setUniformValue("viewMatrix", view);
 	shader_.setUniformValue("projectionMatrix", projection);
+	
+	// Setup lights!
+	pointlight_set_uniform(shader_, lights[0], "pointLights[0]");
 
 	vao_.bind();
 	texture_.bind();

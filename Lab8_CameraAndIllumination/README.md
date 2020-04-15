@@ -23,6 +23,15 @@
 - (Optional) What was your favorite part of the lab?
 - (Optional) How would you improve the lab?
 
+**TO RUN:**
+```sh
+mkdir build
+cd build
+cmake [qt-flags] ..
+make
+./App
+```
+
 ## Logistics
 
 You will be working on your own laptop today.

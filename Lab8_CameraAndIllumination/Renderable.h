@@ -41,7 +41,7 @@ public:
 	// the position array!
 	virtual void init(const QVector<QVector3D>& positions, const QVector<QVector3D>& normals, const QVector<QVector2D>& texCoords, const QVector<unsigned int>& indexes, const QString& textureFile);
 	virtual void update(const qint64 msSinceLastFrame);
-	virtual void draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection);
+	virtual void draw(const QMatrix4x4& world, const QMatrix4x4& view, const QMatrix4x4& projection, struct PointLight lights[1]);
 
 	void setModelMatrix(const QMatrix4x4& transform);
 	void setRotationAxis(const QVector3D& axis);
