@@ -10,7 +10,7 @@
 
 const QVector3D DEFAULT_CAMERA_POS = QVector3D(-2.5, 2.5, 3.0);
 const QVector3D DEFAULT_CAMERA_LOOKAT = QVector3D(0.5, 0.5, 0.0);
-const QVector3D DEFAULT_LIGHT_POS = QVector3D(-.5, 2.5, 0);
+const QVector3D DEFAULT_LIGHT_POS = QVector3D(-.5, 2, 0);
 
 //////////////////////////////////////////////////////////////////////
 // Publics
@@ -28,7 +28,7 @@ BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
   m_lights.emplace_back();
   m_lights[0].position = DEFAULT_LIGHT_POS;
   m_lights[0].setRange(400);
-  m_lights[0].specularIntensity = 100;
+  m_lights[0].specularIntensity = 10;
 }
 
 BasicWidget::~BasicWidget()
@@ -64,7 +64,6 @@ void BasicWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 
 void BasicWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
-  qDebug() << mouseEvent;
   if (mouseEvent->button() == Qt::LeftButton) {
     m_mouseAction = MouseControl::Rotate;
   }
@@ -76,7 +75,6 @@ void BasicWidget::mousePressEvent(QMouseEvent* mouseEvent)
 
 void BasicWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-  qDebug() << mouseEvent;
   if (m_mouseAction == MouseControl::NoAction) {
     return;
   }

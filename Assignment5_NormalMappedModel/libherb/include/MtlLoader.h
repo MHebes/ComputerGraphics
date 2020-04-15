@@ -18,8 +18,10 @@ public:
    */
   int parse_file(const std::string filename);
   std::string get_map_Kd() const { return m_basedir + m_map_Kd; }
+  std::string get_map_Bump() const { return m_basedir + m_map_Bump; }
 
 private:
   std::string m_basedir;
   std::string m_map_Kd;
+  std::string m_map_Bump;
 };

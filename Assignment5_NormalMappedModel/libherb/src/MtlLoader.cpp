@@ -34,6 +34,9 @@ int MtlLoader::parse_file(const std::string filename)
     if (type == "map_Kd") {
       // diffuse color map file
       ss >> m_map_Kd;
+    } else if (type == "map_Bump") {
+      // normal map file
+      ss >> m_map_Bump;
     }
   }
 
