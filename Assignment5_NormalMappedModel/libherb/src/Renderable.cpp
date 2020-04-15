@@ -14,6 +14,7 @@ Renderable::Renderable()
     : m_vbo(QOpenGLBuffer::VertexBuffer),
       m_ibo(QOpenGLBuffer::IndexBuffer),
       m_texture(QOpenGLTexture::Target2D),
+      m_normalmap(QOpenGLTexture::Target2D),
       m_numTris(0),
       m_vertexSize(0),
       m_rotationAxis(0.0, 0.0, 1.0),
@@ -26,6 +27,9 @@ Renderable::~Renderable()
 {
   if (m_texture.isCreated()) {
     m_texture.destroy();
+  }
+  if (m_normalmap.isCreated()) {
+    m_normalmap.destroy();
   }
   if (m_vbo.isCreated()) {
     m_vbo.destroy();
@@ -59,8 +63,8 @@ void Renderable::init(const QVector<QVector3D>& positions,
                       const QVector<QVector3D>& normals,
                       const QVector<QVector2D>& texCoords,
                       const QVector<unsigned int>& indexes,
-                      const QString& textureFile, bool flipTextureH,
-                      bool flipTextureV)
+                      const QString& textureFile, const QString& normalMap,
+                      bool flipTextureH, bool flipTextureV)
 {
   // NOTE:  We do not currently do anything with normals -- we just
   // have it here for a later implementation!
@@ -78,6 +82,10 @@ void Renderable::init(const QVector<QVector3D>& positions,
   // Load our texture
   QImage img(textureFile);
   m_texture.setData(img.mirrored(flipTextureH, flipTextureV));
+
+  // Load our normal map
+  QImage norm(normalMap);
+  m_normalmap.setData(norm.mirrored(flipTextureH, flipTextureV));
 
   // set our number of triangles.
   m_numTris = indexes.size() / 3;
@@ -184,10 +192,13 @@ void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection,
     lights[i].applyToUniform(m_shader, "lights[" + std::to_string(i) + "]");
   }
 
+  // setup textures
   m_vao.bind();
   m_texture.bind();
+  // m_normalmap.bind();
   glDrawElements(GL_TRIANGLES, m_numTris * 3, GL_UNSIGNED_INT, 0);
   m_texture.release();
+  // m_normalmap.release();
   m_vao.release();
   m_shader.release();
 }

@@ -54,6 +54,8 @@ vec3 ComputeLighting(Light light, vec3 norm, vec3 fragPos, vec3 viewDir) {
 
 // Maintain our uniforms.
 uniform sampler2D tex;              // our primary texture
+// uniform sampler2D normalMap;        // normal map
+
 uniform vec3 viewPos;               // can't calculate from view
 uniform Light lights[MAX_LIGHTS];  // Our lights
 uniform int numLights; // number of lights
@@ -61,6 +63,9 @@ uniform int numLights; // number of lights
 void main() {
   // Set our output fragment color to whatever we pull from our input texture (Note, change 'tex' to whatever the sampler is named)
   vec3 diffuse = texture(tex, texCoords).rgb;
+  // vec3 normal = texture(normalMap, texCoords).rgb;
+  // move to range [-1,1] from [0,1]
+  // normal = normalize(normal * 2.0 - 1.0);
 
   // Calculate viewDir
   vec3 viewDir = normalize(viewPos - fragPos);

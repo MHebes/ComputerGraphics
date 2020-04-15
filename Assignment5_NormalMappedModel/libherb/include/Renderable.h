@@ -10,16 +10,17 @@ class Renderable {
 protected:
   // Each renderable has its own model matrix
   QMatrix4x4 m_modelMatrix;
+
   // For now, we have only one shader per object
   QOpenGLShaderProgram m_shader;
-  // For now, we have only one texture per object
+
   QOpenGLTexture m_texture;
-  // For now, we have a single unified buffer per object
+  QOpenGLTexture m_normalmap;
+
   QOpenGLBuffer m_vbo;
-  // Make sure we have an index buffer.
   QOpenGLBuffer m_ibo;
-  // We have a single draw call, so a single vao
   QOpenGLVertexArrayObject m_vao;
+
   // Keep track of how many triangles we actually have to draw in our ibo
   unsigned int m_numTris;
   int m_vertexSize;
@@ -44,8 +45,8 @@ public:
                     const QVector<QVector3D>& normals,
                     const QVector<QVector2D>& texCoords,
                     const QVector<unsigned int>& indexes,
-                    const QString& textureFile, bool flipTextureH = false,
-                    bool flipTextureV = false);
+                    const QString& textureFile, const QString& normalMap,
+                    bool flipTextureH = false, bool flipTextureV = false);
   virtual void update(const qint64 msSinceLastFrame);
   virtual void draw(const QMatrix4x4& view, const QMatrix4x4& projection,
                     const std::vector<Light>& lights);
