@@ -24,10 +24,13 @@ void main()
 
     // We have our transformed position set properly now
     gl_Position = projectionMatrix*viewMatrix*modelMatrix*mappedPos;
+
     // Our fragment pos for lighting.
     fragPos = (modelMatrix*vec4(position, 1.0)).xyz;
+
     // Make sure to transform the normal
     vec4 tmpnorm = modelMatrix*vec4(normal, 0.0);
+    
     norm = normalize(tmpnorm.xyz);
     // And we map our texture coordinates as appropriate
     texCoords = textureCoords;

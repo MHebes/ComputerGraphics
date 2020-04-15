@@ -3,6 +3,9 @@
 #include "TerrainQuad.h"
 #include "UnitQuad.h"
 
+const float LOOK_SPEED = 0.5f;
+const float ZOOM_SPEED = 0.05f;
+
 //////////////////////////////////////////////////////////////////////
 // Publics
 BasicWidget::BasicWidget(QWidget* parent) : QOpenGLWidget(parent), logger_(this), isFilled_(true)
@@ -61,11 +64,16 @@ void BasicWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
   QPoint delta = mouseEvent->pos() - lastMouseLoc_;
   lastMouseLoc_ = mouseEvent->pos();
   if (mouseAction_ == Rotate) {
-    // TODO:  Implement rotating the camera
-  } else if (mouseAction_ == Zoom) {
-    // TODO:  Implement zoom by moving the camera
-    // Zooming is moving along the gaze direction by some amount.
-  } 
+    QMatrix4x4 rot;
+    rot.rotate(LOOK_SPEED * -delta.x(), 0, 1.0f, 0);  // yaw
+    rot.rotate(LOOK_SPEED * delta.y(), 1, 0, 0);      // pitch
+    camera_.setGazeVector(rot * camera_.gazeVector());
+  }
+  else if (mouseAction_ == Zoom) {
+    QVector3D gaze = camera_.gazeVector();
+    camera_.translateCamera(gaze * ZOOM_SPEED * -delta.y());
+  }
+
   update();
 }
 
@@ -85,6 +93,7 @@ void BasicWidget::initializeGL()
 
   TerrainQuad* terrain = new TerrainQuad();
   terrain->init(terrainTex);
+  terrain->setRotationSpeed(0);
   QMatrix4x4 floorXform;
   floorXform.setToIdentity();
   floorXform.translate(-0.5, 0.0, 0.5);
