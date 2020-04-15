@@ -8,9 +8,9 @@
 #include "ObjLoader.h"
 #include "ObjMesh.h"
 
-const QVector3D DEFAULT_CAMERA_POS = QVector3D(-2.5, 2.5, 3.0);
-const QVector3D DEFAULT_CAMERA_LOOKAT = QVector3D(0.5, 0.5, 0.0);
-const QVector3D DEFAULT_LIGHT_POS = QVector3D(-.5, 2, 0);
+const QVector3D DEFAULT_CAMERA_POS = QVector3D(0, 0.5, 3.0);
+const QVector3D DEFAULT_CAMERA_LOOKAT = QVector3D(0, 0, 0.0);
+const QVector3D DEFAULT_LIGHT_POS = DEFAULT_CAMERA_POS;
 
 //////////////////////////////////////////////////////////////////////
 // Publics
@@ -27,8 +27,10 @@ BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
 
   m_lights.emplace_back();
   m_lights[0].position = DEFAULT_LIGHT_POS;
-  m_lights[0].setRange(400);
-  m_lights[0].specularIntensity = 10;
+  m_lights[0].ambientIntensity = 0.1;
+  m_lights[0].diffuseIntensity = 0.5;
+  m_lights[0].specularIntensity = 20;
+  m_lights[0].setRange(20);
 }
 
 BasicWidget::~BasicWidget()
@@ -104,6 +106,8 @@ void BasicWidget::initializeGL()
   initializeOpenGLFunctions();
 
   ObjMesh* mesh = new ObjMesh;
+  mesh->setRotationAxis(QVector3D(0, 1, 0));
+  mesh->setRotationSpeed(0.1);
   mesh->init(m_objfile);
 
   renderables_.push_back(mesh);

@@ -78,6 +78,8 @@ void Renderable::init(const QVector<QVector3D>& positions,
   // Set our model matrix to identity
   m_modelMatrix.setToIdentity();
 
+  // TODO got to be smarter about this mirroring somehow
+
   // Load our texture
   QImage img(textureFile);
   m_texture.setData(img.mirrored(true, true));

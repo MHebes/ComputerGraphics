@@ -40,10 +40,10 @@ void ObjMesh::init(std::string filename)
   }
 
   MtlLoader mtl;
-  // std::cout << "mtllib = " << m_obj.get_mtllib() << std::endl;
+  std::cout << "mtllib = " << m_obj.get_mtllib() << std::endl;
   mtl.parse_file(m_obj.get_mtllib());
-  // std::cout << "tex = " << mtl.get_map_Kd() << std::endl;
-  // std::cout << "norm = " << mtl.get_map_Bump() << std::endl;
+  std::cout << "tex = " << mtl.get_map_Kd() << std::endl;
+  std::cout << "norm = " << mtl.get_map_Bump() << std::endl;
 
   m_pos = m_obj.get_vertices();
   m_norm = m_obj.get_normals();

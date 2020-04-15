@@ -10,8 +10,7 @@
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 
     * https://learnopengl.com/Advanced-Lighting/Normal-Mapping
-	* https://gamedev.stackexchange.com/questions/68612/how-to-compute-tangent-and-bitangent-vectors
-* (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
+* (Optional) What was the most interesting part of the assignment? How would you improve this assignment? It was really cool to see it work!
 
 **To build**
 ```
@@ -20,7 +19,7 @@ cd build
 cmake [qt flags] ..
 make
 cd app
-./App ../../app/objects/house_obj.obj
+./App ../../objects/tester/cube.obj
 ```
  
 ## Description
