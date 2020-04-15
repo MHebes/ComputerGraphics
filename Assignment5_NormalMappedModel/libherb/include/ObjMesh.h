@@ -30,10 +30,10 @@ public:
       exit(1);
     }
     MtlLoader mtl;
-    std::cout << "mtllib = " << m_obj.get_mtllib() << std::endl;
+    // std::cout << "mtllib = " << m_obj.get_mtllib() << std::endl;
     mtl.parse_file(m_obj.get_mtllib());
-    std::cout << "tex = " << mtl.get_map_Kd() << std::endl;
-    std::cout << "norm = " << mtl.get_map_Bump() << std::endl;
+    // std::cout << "tex = " << mtl.get_map_Kd() << std::endl;
+    // std::cout << "norm = " << mtl.get_map_Bump() << std::endl;
 
     QVector<QVector3D> pos = m_obj.get_vertices();
     QVector<QVector3D> norm = m_obj.get_normals();

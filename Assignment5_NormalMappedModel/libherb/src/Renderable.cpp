@@ -192,13 +192,20 @@ void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection,
     lights[i].applyToUniform(m_shader, "lights[" + std::to_string(i) + "]");
   }
 
+  m_shader.setUniformValue("diffuseMap", 0);
+  m_shader.setUniformValue("normalMap", 1);
+
   // setup textures
   m_vao.bind();
-  m_texture.bind();
-  // m_normalmap.bind();
+
+  m_texture.bind(0);
+  m_normalmap.bind(1);
+
   glDrawElements(GL_TRIANGLES, m_numTris * 3, GL_UNSIGNED_INT, 0);
-  m_texture.release();
-  // m_normalmap.release();
+
+  m_normalmap.release(1);
+  m_texture.release(0);
+
   m_vao.release();
   m_shader.release();
 }
