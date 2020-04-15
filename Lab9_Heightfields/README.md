@@ -6,6 +6,14 @@
 
 ## Modify this section
 
+**To build**
+```sh
+mkdir build
+cd build
+cmake [qt flags] ..
+./App
+```
+
 - How many hours did it take you to complete this lab?
 - Did you collaborate with any other students/TAs/Professors?
 - Did you use any external resources? (Cite them below)
@@ -141,8 +149,6 @@ the correct sampler is reading the correct texture!
 4:  We need to set up access to multiple textures in the host (.cpp files).  TODO -- Read and understand the use of glActiveTexture(..) in TerrainQuad::draw(..)
 
 5:  We need to draw our Triangle Strip data!  TODO -- Implement the appropriate draw call in TerrainQuad::draw(..)
-
-```
 
 ## Helpful Resources
 
