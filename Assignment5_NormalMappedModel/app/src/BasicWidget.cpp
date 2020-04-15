@@ -103,7 +103,10 @@ void BasicWidget::initializeGL()
   makeCurrent();
   initializeOpenGLFunctions();
 
-  renderables_.push_back(new ObjMesh(m_objfile, 0, 0, 0, 0, 1, 0, 0));
+  ObjMesh* mesh = new ObjMesh;
+  mesh->init(m_objfile);
+
+  renderables_.push_back(mesh);
 
   glViewport(0, 0, width(), height());
   frameTimer_.start();

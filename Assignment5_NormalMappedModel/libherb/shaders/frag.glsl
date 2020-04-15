@@ -5,10 +5,10 @@
 
 // Take in our texture coordinate from our vertex shader
 in vec2 texCoords;
-// And our normal
-in vec3 norm;
 // And our fragment position for lighting
 in vec3 fragPos;
+// And our TBN matrix
+in mat3 TBN;
 
 // We always define a fragment color that we output.
 out vec4 fragColor;
@@ -65,8 +65,8 @@ void main() {
   vec3 diffuse = texture(diffuseMap, texCoords).rgb;
 
   vec3 normal = texture(normalMap, texCoords).rgb;
-  // move to range [-1,1] from [0,1]
-  normal = normalize(normal * 2.0 - 1.0);
+  normal = normal * 2.0 - 1.0;
+  normal = normalize(TBN * normal);
 
   // Calculate viewDir
   vec3 viewDir = normalize(viewPos - fragPos);

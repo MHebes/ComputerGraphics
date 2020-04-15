@@ -10,6 +10,7 @@
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 
     * https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+	* https://gamedev.stackexchange.com/questions/68612/how-to-compute-tangent-and-bitangent-vectors
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
 
 **To build**

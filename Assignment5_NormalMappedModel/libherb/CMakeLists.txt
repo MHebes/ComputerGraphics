@@ -16,6 +16,8 @@ target_sources(herb PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Light.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ObjLoader.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/ObjMesh.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Util.cpp"
   "${CMAKE_CURRENT_BINARY_DIR}/src/MtlLoader.cpp")
 
 ## Linking to Qt5

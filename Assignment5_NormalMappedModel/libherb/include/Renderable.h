@@ -44,9 +44,10 @@ public:
   virtual void init(const QVector<QVector3D>& positions,
                     const QVector<QVector3D>& normals,
                     const QVector<QVector2D>& texCoords,
+                    const QVector<QVector3D>& tangents,
+                    const QVector<QVector3D>& bitangents,
                     const QVector<unsigned int>& indexes,
-                    const QString& textureFile, const QString& normalMap,
-                    bool flipTextureH = false, bool flipTextureV = false);
+                    const QString& textureFile, const QString& normalMap);
   virtual void update(const qint64 msSinceLastFrame);
   virtual void draw(const QMatrix4x4& view, const QMatrix4x4& projection,
                     const std::vector<Light>& lights);

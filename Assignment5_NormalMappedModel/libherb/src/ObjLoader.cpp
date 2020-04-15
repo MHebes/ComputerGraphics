@@ -161,25 +161,10 @@ int ObjLoader::parse_file(const std::string filename)
   // TODO shouldn't really fail here
   assert(m_uses_uvs && m_uses_normals);
 
-  // for (const QVector3D& e : tmp_vertices) {
-  //   std::cout << "v " << e.x() << " " << e.y() << " " << e.z() << "\n";
-  // }
-  // for (const QVector2D& e : tmp_uvs) {
-  //   std::cout << "vt " << e.x() << " " << e.y() << "\n";
-  // }
-  // for (const QVector3D& e : tmp_normals) {
-  //   std::cout << "vn " << e.x() << " " << e.y() << " " << e.z() << "\n";
-  // }
-  // for (const triface& e : tmp_faces) {
-  //   std::cout << "f " << e << "\n";
-  // }
-  // std::cout << std::endl << std::endl;
-
   // convert the things we got from the obj to usable buffers
+  // TODO(mike) maybe this should be somewhere else?
   obj_to_vbo(tmp_vertices, tmp_uvs, tmp_normals, tmp_faces, m_indices,
              m_vertices, m_uvs, m_normals);
-
-  // print();
 
   return EXIT_SUCCESS;
 }
