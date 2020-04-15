@@ -4,6 +4,8 @@
 #include <QtGui>
 #include <QtOpenGL>
 
+#include "Light.h"
+
 class Renderable {
 protected:
   // Each renderable has its own model matrix
@@ -42,11 +44,11 @@ public:
                     const QVector<QVector3D>& normals,
                     const QVector<QVector2D>& texCoords,
                     const QVector<unsigned int>& indexes,
-                    const QString& textureFile,
-					bool flipTextureH = false,
-					bool flipTextureV = false);
+                    const QString& textureFile, bool flipTextureH = false,
+                    bool flipTextureV = false);
   virtual void update(const qint64 msSinceLastFrame);
-  virtual void draw(const QMatrix4x4& view, const QMatrix4x4& projection);
+  virtual void draw(const QMatrix4x4& view, const QMatrix4x4& projection,
+                    const std::vector<Light>& lights);
 
   void setModelMatrix(const QMatrix4x4& transform);
   void setRotationAxis(const QVector3D& axis);

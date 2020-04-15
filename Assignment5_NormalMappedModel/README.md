@@ -5,7 +5,7 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name(At most 1 partner for this Assignment): 
+* Name and partners name(At most 1 partner for this Assignment): Michael Hebert (no partner)
 * How many hours did it take you to complete this Assignment? 
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 

@@ -3,7 +3,7 @@
 #include "BasicWidget.h"
 
 App::App(std::string objfile, QWidget* parent)
-    : m_objfile(objfile), QMainWindow(parent)
+    : QMainWindow(parent), m_objfile(objfile)
 {
   buildGui();
 }

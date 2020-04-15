@@ -3,46 +3,12 @@
 #include <QtGui>
 #include <QtOpenGL>
 
-const char* vertShaderSource = R"(
-#version 330
-layout(location = 0) in vec3 position;
-// Add an input for texture coordinates
-layout(location = 1) in vec2 textureCoords;
+#include "Light.h"
 
-// We now have our camera system set up.
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
+#define VERT_SHADER "@VERT_SHADER@"  // CMAKE: VERT_SHADER
+#define FRAG_SHADER "@FRAG_SHADER@"  // CMAKE: FRAG_SHADER
 
-// We define a new output vec2 for our texture coorinates.
-out vec2 texCoords;
-
-void main()
-{
-    // We have our transformed position set properly now
-    gl_Position = projectionMatrix*viewMatrix*modelMatrix*vec4(position, 1.0);
-    // And we map our texture coordinates as appropriate
-    texCoords = textureCoords;
-}
-)";
-
-const char* fragShaderSource = R"(
-#version 330
-
-// Take in our texture coordinate from our vertex shader
-in vec2 texCoords;
-// We always define a fragment color that we output.
-out vec4 fragColor;
-
-// Add a sampler to retrieve our color data from!
-uniform sampler2D tex;
-
-
-void main() {
-  // Set our output fragment color to whatever we pull from our input texture (Note, change 'tex' to whatever the sampler is named)
-  fragColor = vec4(texture(tex, texCoords));
-}
-)";
+const unsigned MAX_LIGHTS = 10;
 
 Renderable::Renderable()
     : m_vbo(QOpenGLBuffer::VertexBuffer),
@@ -75,12 +41,11 @@ Renderable::~Renderable()
 void Renderable::createShaders()
 {
   bool ok =
-      m_shader.addShaderFromSourceCode(QOpenGLShader::Vertex, vertShaderSource);
+      m_shader.addShaderFromSourceFile(QOpenGLShader::Vertex, VERT_SHADER);
   if (!ok) {
     qDebug() << m_shader.log();
   }
-  ok = m_shader.addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                        fragShaderSource);
+  ok = m_shader.addShaderFromSourceFile(QOpenGLShader::Fragment, FRAG_SHADER);
   if (!ok) {
     qDebug() << m_shader.log();
   }
@@ -94,8 +59,7 @@ void Renderable::init(const QVector<QVector3D>& positions,
                       const QVector<QVector3D>& normals,
                       const QVector<QVector2D>& texCoords,
                       const QVector<unsigned int>& indexes,
-                      const QString& textureFile,
-                      bool flipTextureH,
+                      const QString& textureFile, bool flipTextureH,
                       bool flipTextureV)
 {
   // NOTE:  We do not currently do anything with normals -- we just
@@ -108,21 +72,19 @@ void Renderable::init(const QVector<QVector3D>& positions,
     return;
   }
 
-  qDebug() << "Num verts = " << positions.size();
-  qDebug() << "Num idx = " << indexes.size();
-
   // Set our model matrix to identity
   m_modelMatrix.setToIdentity();
-  // Load our texture.
+
+  // Load our texture
   QImage img(textureFile);
   m_texture.setData(img.mirrored(flipTextureH, flipTextureV));
 
-  // set our number of trianges.
+  // set our number of triangles.
   m_numTris = indexes.size() / 3;
 
   // num verts (used to size our vbo)
   int numVerts = positions.size();
-  m_vertexSize = 3 + 2;  // Position + texCoord
+  m_vertexSize = 3 + 3 + 2;  // Position + normal + texCoord
   int numVBOEntries = numVerts * m_vertexSize;
 
   // Setup our shader.
@@ -132,7 +94,7 @@ void Renderable::init(const QVector<QVector3D>& positions,
   // The VBO is created -- now we must create our VAO
   m_vao.create();
   m_vao.bind();
-  
+
   m_vbo.create();
   m_vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
   m_vbo.bind();
@@ -142,8 +104,11 @@ void Renderable::init(const QVector<QVector3D>& positions,
     data[i * m_vertexSize + 0] = positions.at(i).x();
     data[i * m_vertexSize + 1] = positions.at(i).y();
     data[i * m_vertexSize + 2] = positions.at(i).z();
-    data[i * m_vertexSize + 3] = texCoords.at(i).x();
-    data[i * m_vertexSize + 4] = texCoords.at(i).y();
+    data[i * m_vertexSize + 3] = normals.at(i).x();
+    data[i * m_vertexSize + 4] = normals.at(i).y();
+    data[i * m_vertexSize + 5] = normals.at(i).z();
+    data[i * m_vertexSize + 6] = texCoords.at(i).x();
+    data[i * m_vertexSize + 7] = texCoords.at(i).y();
   }
   m_vbo.allocate(data, numVBOEntries * sizeof(float));
   delete[] data;
@@ -152,6 +117,7 @@ void Renderable::init(const QVector<QVector3D>& positions,
   m_ibo.create();
   m_ibo.bind();
   m_ibo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
   // create a temporary array for our indexes
   unsigned int* idxAr = new unsigned int[indexes.size()];
   for (int i = 0; i < indexes.size(); ++i) {
@@ -164,7 +130,10 @@ void Renderable::init(const QVector<QVector3D>& positions,
   m_shader.enableAttributeArray(0);
   m_shader.setAttributeBuffer(0, GL_FLOAT, 0, 3, m_vertexSize * sizeof(float));
   m_shader.enableAttributeArray(1);
-  m_shader.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2,
+  m_shader.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 3,
+                              m_vertexSize * sizeof(float));
+  m_shader.enableAttributeArray(2);
+  m_shader.setAttributeBuffer(2, GL_FLOAT, (3 + 3) * sizeof(float), 2,
                               m_vertexSize * sizeof(float));
 
   // Release our vao and THEN release our buffers.
@@ -184,7 +153,8 @@ void Renderable::update(const qint64 msSinceLastFrame)
   }
 }
 
-void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection)
+void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection,
+                      const std::vector<Light>& lights)
 {
   // Create our model matrix.
   QMatrix4x4 rotMatrix;
@@ -198,8 +168,21 @@ void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection)
   QMatrix4x4 id;
   id.setToIdentity();
   m_shader.setUniformValue("modelMatrix", modelMat);
+  QVector3D cameraPos = view.inverted().column(3).toVector3D();
+  // qDebug() << cameraPos;
+  m_shader.setUniformValue("viewPos", cameraPos);
   m_shader.setUniformValue("viewMatrix", view);
   m_shader.setUniformValue("projectionMatrix", projection);
+
+  // Setup lights
+  int numLights = lights.size();
+  if (numLights > MAX_LIGHTS) numLights = MAX_LIGHTS;
+
+  m_shader.setUniformValue("numLights", numLights);
+
+  for (int i = 0; i < numLights; i++) {
+    lights[i].applyToUniform(m_shader, "lights[" + std::to_string(i) + "]");
+  }
 
   m_vao.bind();
   m_texture.bind();

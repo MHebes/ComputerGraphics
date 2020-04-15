@@ -7,8 +7,14 @@ target_include_directories(herb PUBLIC
 set(DEFAULT_TEXTURE "${CMAKE_CURRENT_SOURCE_DIR}/data/grid.ppm")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/MtlLoader.cpp" "${CMAKE_CURRENT_BINARY_DIR}/src/MtlLoader.cpp")
 
+set(VERT_SHADER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/vert.glsl")
+set(FRAG_SHADER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/frag.glsl")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Renderable.cpp" "${CMAKE_CURRENT_BINARY_DIR}/src/Renderable.cpp")
+
 target_sources(herb PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Renderable.cpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/src/Renderable.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Light.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ObjLoader.cpp"
   "${CMAKE_CURRENT_BINARY_DIR}/src/MtlLoader.cpp")
 
