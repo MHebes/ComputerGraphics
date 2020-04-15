@@ -9,11 +9,19 @@
 * How many hours did it take you to complete this Assignment? 
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
+    * https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
-  
+
+**To build**
+```
+mkdir build
+cd build
+cmake [qt flags] ..
+make
+cd app
+./App ../../app/objects/house_obj.obj
+```
+ 
 ## Description
 
 The grand finale! err, at least for our .obj model loader. The final
