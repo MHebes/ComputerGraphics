@@ -2,15 +2,26 @@
 
 ![Alt text](./media/working.png "Working Solar System")
 
+**Notes**
+
+- The Scene class is pretty much complete I think
+- I tried to move the planet to a new class and ran into trouble
+to build + run:
+```sh
+mkdir build
+cd build
+cmake [qt flags] ..
+make -j8
+./app/App
+```
+
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name(At most 1 partner for this Assignment): 
-* How many hours did it take you to complete this Assignment? 
-* Did you collaborate or share ideas with any other students/TAs/Professors? 
+* Name and partners name(At most 1 partner for this Assignment): Michael Hebert (just me)
+* How many hours did it take you to complete this Assignment? 6
+* Did you collaborate or share ideas with any other students/TAs/Professors? no
 * Did you use any external resources? 
-  * (tbd if any)
-  * (tbd if any)
-  * (tbd if any)
+  * The tutorial on the github repo
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
   
 ## Description
