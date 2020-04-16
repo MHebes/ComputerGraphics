@@ -7,12 +7,18 @@
 #include "MtlLoader.h"
 #include "ObjLoader.h"
 #include "Sphere.h"
+#include "Planet.h"
 
 const QVector3D DEFAULT_CAMERA_POS = QVector3D(0, 0.5, 3.0);
 const QVector3D DEFAULT_CAMERA_LOOKAT = QVector3D(0, 0, 0.0);
-const QVector3D DEFAULT_LIGHT_POS = DEFAULT_CAMERA_POS;
+const QVector3D DEFAULT_LIGHT_POS = QVector3D(0, 0, 0);
 
-Sphere* sphere;
+// TODO(mike) use cmake variables to do this
+#define TEXTURE_SUN "../../sun.ppm"
+#define TEXTURE_EARTH "../../earth.ppm"
+#define TEXTURE_MERCURY "../../mercury.ppm"
+#define TEXTURE_PLANET "../../planet.ppm"
+#define TEXTURE_ROCK "../../rock.ppm"
 
 //////////////////////////////////////////////////////////////////////
 // Publics
@@ -20,7 +26,7 @@ BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
     : QOpenGLWidget(parent),
       m_file(objfile),
       m_lights(),
-      m_scene(),
+      m_scene(std::make_shared<Scene>()),
       m_camera(),
       m_logger(this)
 {
@@ -31,13 +37,27 @@ BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
 
   m_lights.push_back(new Light);
   m_lights[0]->position = DEFAULT_LIGHT_POS;
-  m_lights[0]->ambientIntensity = 0.1;
-  m_lights[0]->diffuseIntensity = 0.5;
-  m_lights[0]->specularIntensity = 20;
-  m_lights[0]->setRange(20);
+  m_lights[0]->ambientIntensity = 0.25;
+  m_lights[0]->diffuseIntensity = 1;
+  m_lights[0]->specularIntensity = 1; // TODO(mike) I think my specular reflections are busted
+  m_lights[0]->setRange(200);
 
-  sphere = new Sphere;
-  m_scene.setRenderable(std::unique_ptr<Sphere>(sphere));
+  m_scene->setRenderable(std::make_unique<Sphere>(TEXTURE_SUN));
+
+  QMatrix4x4 mat;
+  
+  // earth
+  auto earth_s = std::make_shared<Planet>(TEXTURE_EARTH, 1, 0.4, 0, 1);
+  
+  // moon
+  auto moon1_s = std::make_shared<Scene>();
+  mat.setToIdentity();
+  mat.translate(1, 0, 0);
+  moon1_s->setLocalTransform(mat);
+  moon1_s->setParent(m_scene);
+  auto moon1 = std::make_unique<Sphere>(TEXTURE_ROCK);
+  moon1->setModelMatrix(mat);
+  moon1_s->setRenderable(std::move(moon1));
 }
 
 BasicWidget::~BasicWidget()
@@ -115,7 +135,7 @@ void BasicWidget::initializeGL()
   makeCurrent();
   initializeOpenGLFunctions();
 
-  sphere->init(m_file); // TODO hacky
+  m_scene->init();
 
   glViewport(0, 0, width(), height());
   m_frameTimer.start();
@@ -159,9 +179,9 @@ void BasicWidget::paintGL()
   }
 
   if (shouldUpdate) {
-    m_scene.update(dt);
+    m_scene->update(dt);
   }
-  m_scene.draw(m_camera.getViewMatrix(), m_camera.getProjectionMatrix(),
+  m_scene->draw(m_camera.getViewMatrix(), m_camera.getProjectionMatrix(),
               m_lights);
 
   if (shouldUpdate) m_frameTimer.start();

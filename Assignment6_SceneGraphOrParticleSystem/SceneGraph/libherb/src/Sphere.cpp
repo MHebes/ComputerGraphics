@@ -10,7 +10,7 @@
 #define DEFAULT_NORMAL_MAP "@DEFAULT_NORMAL_MAP@"  // CMake var
 
 // Calls the initalization routine
-Sphere::Sphere() {
+Sphere::Sphere(std::string texture) : m_texture(texture) {
     calculatePoints();
 }
 
@@ -77,9 +77,9 @@ void Sphere::calculatePoints()
                           tangents_, bitangents_);
 }
 
-void Sphere::init(std::string texture)
+void Sphere::init()
 {
-  QString qtexture = QString::fromStdString(texture);
+  QString qtexture = QString::fromStdString(m_texture);
   QString qnormalmap = QString::fromStdString(DEFAULT_NORMAL_MAP);
 
   Renderable::init(positions_, normals_, textureCoords_, tangents_, bitangents_,

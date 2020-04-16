@@ -27,7 +27,7 @@ private:
   QVector<Light*> m_lights;
   QVector<Emitter*> m_emitters;
 
-  Scene m_scene;
+  std::shared_ptr<Scene> m_scene;
 
   QOpenGLDebugLogger m_logger;
 

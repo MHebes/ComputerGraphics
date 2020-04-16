@@ -21,9 +21,10 @@
 class Sphere : public Renderable {
 public:
   // Constructor for the Sphere
-  Sphere();
+  Sphere(std::string texture);
+
   // The intialization routine for this object.
-  void init(std::string texture);
+  void init();
 
   // Getters for our data.
   QVector<QVector3D> positions() const { return positions_; }
@@ -40,6 +41,7 @@ private:
   QVector<QVector3D> tangents_;
   QVector<QVector3D> bitangents_;
   QVector<unsigned int> index_;
+  std::string m_texture;
 
   void calculatePoints();
 };

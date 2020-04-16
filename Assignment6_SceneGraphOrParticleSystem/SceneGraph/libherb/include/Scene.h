@@ -11,24 +11,18 @@
  * @brief Represents a node in the tree
  *
  */
-class Scene : std::enable_shared_from_this<Scene> {
+class Scene : public std::enable_shared_from_this<Scene> {
 public:
   // create root scene
   Scene();
 
-  // create scene with parent
-  Scene(std::weak_ptr<Scene> parent);
-
-  // create scene with parent and object
-  Scene(std::weak_ptr<Scene> parent, std::unique_ptr<Renderable> renderable);
-
-  // change the parent of this scene
+  // change the parent of this scene and update the parent's children
   void setParent(std::weak_ptr<Scene> parent);
 
   // change the renderable of this scene
   void setRenderable(std::unique_ptr<Renderable> renderable);
 
-  // add a child scene
+  // add a child scene and update the child's parent
   void addChild(std::shared_ptr<Scene> child);
 
   // update this scene's renderable and all its children
@@ -37,6 +31,9 @@ public:
   // draw this scene's renderable (if it exists) and all its children
   void draw(const QMatrix4x4& view, const QMatrix4x4& projection,
             const QVector<Light*>& lights);
+
+  // init all the renderables in the tree
+  void init();
 
   QMatrix4x4 localTransform() { return m_localTransform; }
 
@@ -49,6 +46,8 @@ public:
   // TODO
   // void setWorldTransform(const QMatrix4x4& transform);
 
+  // TODO remove children
+
 private:
   std::optional<std::weak_ptr<Scene>> m_parent;  // can be invalid
   std::vector<std::shared_ptr<Scene>> m_children;
@@ -56,6 +55,12 @@ private:
 
   QMatrix4x4 m_localTransform;
   QMatrix4x4 m_worldTransform;
+
+  // does not change new parent's child list, but does still delete from old parent's list
+  void _setParent(std::weak_ptr<Scene> parent);
+
+  // does not change child's parent
+  void _addChild(std::shared_ptr<Scene> child);
 
 protected:
   // locks the parent to get its worldtranform
@@ -65,4 +70,10 @@ protected:
   void computeWorldTransform(const QMatrix4x4& parentWorldTransform);
 
   void removeChild(std::shared_ptr<Scene> child);
+  
+  // override to mess with update. called before children
+  virtual void onUpdate(float ms) {}
+  
+  // override to mess with init. called before children
+  virtual void onInit() {}
 };

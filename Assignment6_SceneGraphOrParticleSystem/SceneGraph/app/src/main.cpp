@@ -14,11 +14,6 @@ static bool enableGLDebug = true;
 
 int main(int argc, char** argv)
 {
-  // assert(argc >= 2);
-  if (argc < 2) {
-    std::cerr << "Please supply a texture file" << std::endl;
-    exit(1);
-  }
 
   QApplication a(argc, argv);
   QString appDir = a.applicationDirPath();
@@ -34,7 +29,7 @@ int main(int argc, char** argv)
   }
   QSurfaceFormat::setDefaultFormat(fmt);
 
-  App app(argv[1]);
+  App app("");
   app.show();
   return QApplication::exec();
 }

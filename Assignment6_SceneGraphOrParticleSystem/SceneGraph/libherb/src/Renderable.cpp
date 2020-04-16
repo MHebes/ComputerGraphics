@@ -64,6 +64,12 @@ void Renderable::drawCall() const
   glDrawElements(GL_TRIANGLES, m_numTris * 3, GL_UNSIGNED_INT, 0);
 }
 
+void Renderable::init()
+{
+  init(m_positions, m_normals, m_texCoords, m_tangents, m_bitangents, m_indexes,
+       m_textureFile, m_normalMap);
+}
+
 void Renderable::init(const QVector<QVector3D>& positions,
                       const QVector<QVector3D>& normals,
                       const QVector<QVector2D>& texCoords,
@@ -231,6 +237,7 @@ void Renderable::draw(const QMatrix4x4& world, const QMatrix4x4& view,
   rotMatrix.rotate(m_rotationAngle, m_rotationAxis);
 
   QMatrix4x4 modelMat = world * m_modelMatrix * rotMatrix;
+  // qDebug() << modelMat;
   // Make sure our state is what we want
   m_shader.bind();
   // Set our matrix uniforms!
