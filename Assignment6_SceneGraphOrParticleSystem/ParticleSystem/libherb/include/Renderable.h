@@ -30,8 +30,19 @@ protected:
   float m_rotationSpeed;
   float m_rotationAngle;
 
-  // Create our shader and fix it up
-  void createShaders();
+  /**
+   * @brief Create the shaders this will used.
+   * 
+   * Override this to change the shaders.
+   */
+  virtual void createShaders();
+
+  /**
+   * @brief Draw call
+   * 
+   * Override this to change the draw call.
+   */
+  virtual void drawCall() const;
 
 public:
   Renderable();

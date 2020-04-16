@@ -59,6 +59,11 @@ void Renderable::createShaders()
   }
 }
 
+void Renderable::drawCall() const
+{
+  glDrawElements(GL_TRIANGLES, m_numTris * 3, GL_UNSIGNED_INT, 0);
+}
+
 void Renderable::init(const QVector<QVector3D>& positions,
                       const QVector<QVector3D>& normals,
                       const QVector<QVector2D>& texCoords,
@@ -256,7 +261,7 @@ void Renderable::draw(const QMatrix4x4& view, const QMatrix4x4& projection,
   m_texture.bind(0);
   m_normalmap.bind(1);
 
-  glDrawElements(GL_TRIANGLES, m_numTris * 3, GL_UNSIGNED_INT, 0);
+  drawCall();
 
   m_normalmap.release(1);
   m_texture.release(0);

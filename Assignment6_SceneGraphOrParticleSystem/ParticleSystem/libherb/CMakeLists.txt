@@ -11,8 +11,12 @@ set(VERT_SHADER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/vert.glsl")
 set(FRAG_SHADER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/frag.glsl")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Renderable.cpp" "${CMAKE_CURRENT_BINARY_DIR}/src/Renderable.cpp")
 
+set(DEFAULT_NORMAL_MAP "${CMAKE_CURRENT_SOURCE_DIR}/data/norm.ppm")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/TexturedQuad.cpp" "${CMAKE_CURRENT_BINARY_DIR}/src/TexturedQuad.cpp")
+
 target_sources(herb PUBLIC
   "${CMAKE_CURRENT_BINARY_DIR}/src/Renderable.cpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/src/TexturedQuad.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Light.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ObjLoader.cpp"

@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Renderable.h"
 #include "Emitter.h"
+#include "TexturedQuad.h"
 
 const float LOOK_SPEED = 0.5f;
 const float ZOOM_SPEED = 0.05f;
@@ -25,11 +26,12 @@ private:
   Camera m_camera;
   QVector<Light*> m_lights;
   QVector<Emitter*> m_emitters;
-  QVector<Renderable*> m_renderables;
+
+  TexturedQuad m_mesh;
 
   QOpenGLDebugLogger m_logger;
 
-  std::string m_objfile;
+  std::string m_file;
 
   // mouse controls
   enum MouseControl { NoAction = 0, Rotate, Zoom };

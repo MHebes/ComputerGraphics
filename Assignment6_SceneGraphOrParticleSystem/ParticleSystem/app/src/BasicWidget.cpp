@@ -16,12 +16,14 @@ const QVector3D DEFAULT_LIGHT_POS = DEFAULT_CAMERA_POS;
 // Publics
 BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
     : QOpenGLWidget(parent),
-      m_objfile(objfile),
+      m_file(objfile),
       m_lights(),
+      m_mesh(),
       m_camera(),
       m_logger(this)
 {
   setFocusPolicy(Qt::StrongFocus);
+
   m_camera.setPosition(DEFAULT_CAMERA_POS);
   m_camera.setLookAt(DEFAULT_CAMERA_LOOKAT);
 
@@ -32,22 +34,18 @@ BasicWidget::BasicWidget(std::string objfile, QWidget* parent)
   m_lights[0]->specularIntensity = 20;
   m_lights[0]->setRange(20);
 
-  ObjMesh* mesh = new ObjMesh;
-  mesh->setRotationAxis(QVector3D(0, 1, 0));
-  mesh->setRotationSpeed(0.1);
-  mesh->init(objfile);
-  m_renderables.push_back(mesh);
+  m_mesh.setRotationAxis(QVector3D(0, 1, 0));
+  m_mesh.setRotationSpeed(0.1);
 
   m_emitters.push_back(new Emitter(QVector3D(0, 0, 0), QVector3D(0, 1, 0), 0.5,
-                                   m_renderables[0], QVector3D(0, 1, 0), 5));
+                                   &m_mesh, QVector3D(0, 1, 0), 5));
 }
 
 BasicWidget::~BasicWidget()
 {
   for (auto& e : m_lights)
     if (e) delete e;
-  for (auto& e : m_renderables)
-    if (e) delete e;
+  // delete m_mesh
   for (auto& e : m_emitters)
     if (e) delete e;
 }
@@ -95,8 +93,10 @@ void BasicWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
   m_lastMouseLoc = mouseEvent->pos();
   if (m_mouseAction == Rotate) {
     QMatrix4x4 rot;
+
     rot.rotate(LOOK_SPEED * -delta.x(), 0, 1.0f, 0);  // yaw
     rot.rotate(LOOK_SPEED * delta.y(), 1, 0, 0);      // pitch
+
     m_camera.setGazeVector(rot * m_camera.gazeVector());
   }
   else if (m_mouseAction == Zoom) {
@@ -115,6 +115,9 @@ void BasicWidget::initializeGL()
 {
   makeCurrent();
   initializeOpenGLFunctions();
+
+  m_mesh.init(m_file);
+
   glViewport(0, 0, width(), height());
   m_frameTimer.start();
 }
@@ -156,13 +159,11 @@ void BasicWidget::paintGL()
     }
   }
 
-  for (auto renderable : m_renderables) {
-    if (shouldUpdate) {
-      renderable->update(dt);
-    }
-    renderable->draw(m_camera.getViewMatrix(), m_camera.getProjectionMatrix(),
-                     m_lights);
+  if (shouldUpdate) {
+    m_mesh.update(dt);
   }
+  m_mesh.draw(m_camera.getViewMatrix(), m_camera.getProjectionMatrix(),
+              m_lights);
 
   if (shouldUpdate) m_frameTimer.start();
 

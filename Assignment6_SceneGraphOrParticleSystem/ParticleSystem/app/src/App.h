@@ -11,7 +11,7 @@ class App : public QMainWindow {
   Q_OBJECT
 
 public:
-  App(std::string objfile, QWidget* parent = 0);
+  App(std::string file, QWidget* parent = 0);
   virtual ~App();
 
 signals:
@@ -20,5 +20,5 @@ public slots:
 
 private:
   void buildGui();
-  std::string m_objfile;
+  std::string m_file;
 };

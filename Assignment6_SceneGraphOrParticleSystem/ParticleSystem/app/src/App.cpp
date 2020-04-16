@@ -2,8 +2,8 @@
 
 #include "BasicWidget.h"
 
-App::App(std::string objfile, QWidget* parent)
-    : QMainWindow(parent), m_objfile(objfile)
+App::App(std::string file, QWidget* parent)
+    : QMainWindow(parent), m_file(file)
 {
   buildGui();
 }
@@ -18,6 +18,6 @@ void App::buildGui()
   QAction* exit = file->addAction("Quit", [this]() { close(); });
 
   // Our basic widget.
-  BasicWidget* widget = new BasicWidget(m_objfile, this);
+  BasicWidget* widget = new BasicWidget(m_file, this);
   setCentralWidget(widget);
 }
