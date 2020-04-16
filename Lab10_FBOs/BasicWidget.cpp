@@ -133,12 +133,12 @@ void BasicWidget::setupViewQuad()
 void BasicWidget::setupShaders()
 {
     // TODO:  You may need to change these paths based on how/where you choose to build
-    QString vertexFilename = "../../FBOVert.glsl";
+    QString vertexFilename = "../FBOVert.glsl";
     bool ok = shader_.addShaderFromSourceFile(QOpenGLShader::Vertex, vertexFilename);
     if (!ok) {
         qDebug() << shader_.log();
     }
-    QString fragmentFilename = "../../FBOFrag.glsl";
+    QString fragmentFilename = "../FBOFrag.glsl";
     ok = shader_.addShaderFromSourceFile(QOpenGLShader::Fragment, fragmentFilename);
     if (!ok) {
         qDebug() << shader_.log();
@@ -180,7 +180,7 @@ void BasicWidget::initializeGL()
 
   qDebug() << QDir::currentPath();
   // TODO:  You may have to change these paths.
-  QString terrainTex = "../../colormap.ppm";
+  QString terrainTex = "../colormap.ppm";
 
   TerrainQuad* terrain = new TerrainQuad();
   terrain->init(terrainTex);

@@ -1,7 +1,7 @@
 # Assignment 6
 
 **Tried to start implementing the particle system but ran into trouble
-getting glDrawElementsInstanced to work.**
+getting glDrawElementsInstanced to work. Mostly implemented the scene graph thing but needs polish and revolution**
   
 ## Description
 

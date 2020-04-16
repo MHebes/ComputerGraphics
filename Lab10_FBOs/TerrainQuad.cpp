@@ -1,7 +1,7 @@
 #include "TerrainQuad.h"
 
 #include <QtGui>
-#include <QOpenGLFunctions_3_3_core>
+#include <QtCore>
 
 TerrainQuad::TerrainQuad() : lightPos_(0.5f, 0.5f, -2.0f), sign_(1.0f), numIdxPerStrip_(0), numStrips_(0), heightTexture_(QOpenGLTexture::Target2D)
 {}
@@ -24,7 +24,7 @@ void TerrainQuad::init(const QString& textureFile)
 
     QVector<unsigned int> stripIdx;
     QVector3D normal(0.0, 1.0, 0.0);
-    QImage heightImage("../../terrain2.ppm");
+    QImage heightImage("../terrain2.ppm");
     unsigned int curIdx = 0;
     // Populate our grid
     for (unsigned int r = 0; r < numRows; ++r) {

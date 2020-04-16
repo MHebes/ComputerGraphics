@@ -2,15 +2,23 @@
 
 *TODO*: Please edit the following information in your assignment
 
-* Name and partners name(At most 1 partner for this Assignment): 
-* How many hours did it take you to complete this Assignment? 
+* Name and partners name(At most 1 partner for this Assignment):  Michael Hebert
+* How many hours did it take you to complete this Assignment? 5
 * Did you collaborate or share ideas with any other students/TAs/Professors? 
 * Did you use any external resources? 
   * https://gameprogrammingpatterns.com/object-pool.html
   * https://learnopengl.com/Advanced-OpenGL/Instancing
-  * (tbd if any)
 * (Optional) What was the most interesting part of the assignment? How would you improve this assignment?
   
+**To build**
+```sh
+mkdir build
+cd build
+cmake ..
+make -j8
+./app/App
+```
+
 ## Description
 
 In previous lectures and labs, we learned that a single model might be
